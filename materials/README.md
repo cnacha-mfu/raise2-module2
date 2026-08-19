@@ -20,7 +20,8 @@ Raise2/
 │   │   ├── glossary.md     แผ่นศัพท์ภาษาคน — แจกผู้เรียนคาบแรก
 │   │   ├── specs/          Spec ของ FixIt (สาธิต) และ LeaveEasy (เฉลยตัวอย่าง)
 │   │   ├── recovery/       ชุดกู้สถานะรายสัปดาห์ (เป็นชุด prompt ไม่ใช่โค้ด)
-│   │   └── templates/      .gitignore · CLAUDE.md · ตัวอย่าง Rules · ตั้งค่า Playwright MCP
+│   │   ├── templates/      .gitignore · CLAUDE.md · ตัวอย่าง Rules · ตั้งค่า Playwright MCP
+│   │   └── supplements/    สไลด์เสริม HTML มีแอนิเมชัน (llm-basics)
 │   └── week6/ … week9/     สัปดาห์ละ 3 ชิ้น (ดูตาราง)
 │
 └── scripts/

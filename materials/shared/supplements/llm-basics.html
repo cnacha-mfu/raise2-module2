@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI ทำงานยังไง — โทเคน · ความจำ · ข้อจำกัด</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --ink:#f1f5f9; --dim:#94a3b8;
+    --amber:#fbbf24; --green:#4ade80; --red:#f87171; --blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Leelawadee UI","Sarabun","Noto Sans Thai",sans-serif;overflow:hidden}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;
+    justify-content:center;align-items:center;text-align:center;padding:4vh 8vw;gap:3vh}
+  .slide.on{display:flex}
+  h1{font-size:6.2vh;line-height:1.3}
+  h2{font-size:5vh;line-height:1.35}
+  p.big{font-size:3.4vh;color:var(--dim);max-width:34em;line-height:1.6}
+  .hero{font-size:12vh;line-height:1}
+  .tag{font-size:2.4vh;color:var(--amber);letter-spacing:.1em}
+  .foot{position:fixed;bottom:1.6vh;left:0;right:0;text-align:center;
+    font-size:1.9vh;color:#475569}
+  .dots{position:fixed;top:2vh;left:0;right:0;display:flex;gap:.8vh;justify-content:center}
+  .dots i{width:1.2vh;height:1.2vh;border-radius:50%;background:#334155}
+  .dots i.here{background:var(--amber)}
+  kbd{background:#334155;border-radius:.6vh;padding:.3vh 1.2vh;font-size:.85em;
+    font-family:Consolas,monospace;color:var(--amber)}
+  /* ---- ชิ้นส่วนที่ใช้ซ้ำ ---- */
+  .row{display:flex;gap:1.4vh;flex-wrap:wrap;justify-content:center;align-items:center}
+  .chip{background:var(--card);border:.3vh solid #334155;border-radius:1.4vh;
+    padding:1.2vh 2.2vh;font-size:3vh}
+  .chip.gold{border-color:var(--amber);color:var(--amber)}
+  .chip.ok{border-color:var(--green)}
+  .chip.bad{border-color:var(--red);color:var(--red)}
+  .panel{background:var(--card);border-radius:2vh;padding:3vh 4vh;max-width:80vw}
+  table{border-collapse:collapse;font-size:2.9vh}
+  td,th{padding:1.2vh 2.4vh;border-bottom:.2vh solid #334155;text-align:left}
+  /* ---- แอนิเมชัน (เริ่มใหม่ทุกครั้งที่เปิดสไลด์) ---- */
+  .on .fadeup{opacity:0;animation:fadeup .7s forwards}
+  .on .d1{animation-delay:.4s}.on .d2{animation-delay:1.1s}.on .d3{animation-delay:1.8s}
+  .on .d4{animation-delay:2.5s}.on .d5{animation-delay:3.2s}
+  @keyframes fadeup{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(2.5vh)}}
+  .on .pop{opacity:0;transform:scale(.4);animation:pop .5s forwards}
+  @keyframes pop{to{opacity:1;transform:scale(1)}}
+  .on .fall{animation:fall 1.2s 2.6s forwards}
+  @keyframes fall{to{transform:translateY(60vh) rotate(24deg);opacity:0}}
+  .on .blink{animation:blink 1.1s 3.4s 3}
+  @keyframes blink{50%{background:#7f1d1d}}
+  .caret{display:inline-block;width:.55em;height:1em;background:var(--amber);
+    vertical-align:-.15em;animation:caret .8s steps(1) infinite}
+  @keyframes caret{50%{opacity:0}}
+  /* มิเตอร์โทเคน */
+  .meter{width:60vw;height:5vh;background:#334155;border-radius:3vh;overflow:hidden}
+  .meter b{display:block;height:100%;width:0;border-radius:3vh;
+    background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+  .on .meter b{animation:fill 3s 1s forwards}
+  @keyframes fill{to{width:88%}}
+  /* โต๊ะทำงาน */
+  .desk{width:70vw;min-height:30vh;background:#3b2f1e;border:.5vh solid #64513a;
+    border-radius:2vh;display:flex;flex-wrap:wrap;gap:1.4vh;align-content:flex-start;
+    padding:2vh;justify-content:flex-start}
+  .desk .chip{font-size:2.6vh}
+</style>
+</head>
+<body>
+
+<!-- 1 ปก -->
+<section class="slide on">
+  <div class="tag">สื่อเสริม · Module 2 · ใช้คู่สัปดาห์ที่ 6</div>
+  <div class="hero">🤖</div>
+  <h1>AI ทำงานยังไง?</h1>
+  <p class="big">โทเคนคืออะไร · ความจำของ AI อยู่ตรงไหน · และข้อจำกัดที่คุณจะเจอจริงในคาบบ่ายนี้</p>
+  <p class="big fadeup d1">⏱ 10 นาที · ไม่มีคณิตศาสตร์ · ไม่มีศัพท์ที่ไม่แปล</p>
+</section>
+
+<!-- 2 เครื่องเติมคำ -->
+<section class="slide">
+  <h2>AI คือ "เครื่องเติมคำ" ที่อ่านหนังสือมามหาศาล</h2>
+  <div class="panel" style="font-size:4.2vh">วันนี้อากาศ <span class="caret"></span></div>
+  <div class="row">
+    <div class="chip ok pop d1">ดี &nbsp;62%</div>
+    <div class="chip pop d2">ร้อน &nbsp;23%</div>
+    <div class="chip pop d3">แจ่มใส &nbsp;9%</div>
+    <div class="chip pop d4">เป็นใจ &nbsp;3%</div>
+  </div>
+  <p class="big fadeup d5">มันเดา "คำถัดไป" ทีละคำ ๆ จนกลายเป็นคำตอบทั้งย่อหน้า — โค้ดก็คือข้อความแบบหนึ่ง มันจึงเขียนโค้ดได้ด้วยวิธีเดียวกัน</p>
+</section>
+
+<!-- 3 เดาเก่ง ไม่ใช่รู้จริง -->
+<section class="slide">
+  <h2>มันไม่ได้ "รู้" — มัน "เดาเก่งมาก"</h2>
+  <div class="row">
+    <div class="chip ok pop d1" style="font-size:3.4vh">✅ เดาถูก = คำตอบดูฉลาด</div>
+    <div class="chip bad pop d2" style="font-size:3.4vh">❌ เดาผิด = ตอบมั่ว<br>ด้วยน้ำเสียงมั่นใจเท่ากัน</div>
+  </div>
+  <p class="big fadeup d3">อาการตอบมั่วอย่างมั่นใจ มีชื่อเรียกว่า <b style="color:var(--ink)">Hallucination</b> (อาการหลอน)</p>
+  <p class="big fadeup d4">🔑 นี่คือเหตุผลที่หลักสูตรนี้ให้คุณ <b style="color:var(--amber)">ตรวจแผนก่อนให้ลงมือ และตรวจผลด้วยตาทุกครั้ง</b></p>
+</section>
+
+<!-- 4 โทเคน -->
+<section class="slide">
+  <h2>Token (โทเคน) = คำที่ถูกหั่นเป็นชิ้นเล็ก</h2>
+  <p class="big">AI ไม่ได้อ่านทีละตัวอักษร มันอ่านทีละ "ชิ้นคำ"</p>
+  <div class="panel" style="font-size:3.6vh">ผมอยากได้หน้ารายการใบลา</div>
+  <div class="row">
+    <div class="chip gold pop d1">ผม</div><div class="chip gold pop d1">อยาก</div>
+    <div class="chip gold pop d2">ได้</div><div class="chip gold pop d2">หน้า</div>
+    <div class="chip gold pop d3">รายการ</div><div class="chip gold pop d3">ใบ</div>
+    <div class="chip gold pop d4">ลา</div>
+  </div>
+  <p class="big fadeup d5">ทุกอย่างนับเป็นโทเคนหมด — สิ่งที่คุณพิมพ์ · ไฟล์ที่มันอ่าน · คำตอบที่มันเขียน<br>และ⚠️ <b style="color:var(--ink)">ภาษาไทยถูกหั่นละเอียดกว่าอังกฤษ = กินโทเคนมากกว่า</b></p>
+</section>
+
+<!-- 5 โทเคน = เงิน -->
+<section class="slide">
+  <h2>โทเคนคือ "หน่วยนับเงิน" ของ AI</h2>
+  <div class="hero">🪙</div>
+  <p class="big">ใช้ AI = จ่ายตามจำนวนโทเคนที่ไหลเข้า-ออก เหมือนค่าน้ำค่าไฟ</p>
+  <div class="panel fadeup d2" style="font-size:3.2vh">
+    พิมพ์สั้นแต่ชัด ไม่ได้ประหยัดแค่เวลา — ประหยัดเงินด้วย<br>
+    <span style="color:var(--dim)">ดูการใช้ของเราได้ด้วยคำสั่ง</span> <kbd>/usage</kbd>
+  </div>
+</section>
+
+<!-- 6 โต๊ะทำงาน -->
+<section class="slide">
+  <h2>Context Window = โต๊ะทำงานของ AI</h2>
+  <p class="big">ทุกอย่างที่มันใช้คิด ต้องวางอยู่บนโต๊ะตัวเดียวนี้</p>
+  <div class="desk">
+    <div class="chip pop d1">📄 คำสั่งของคุณ</div>
+    <div class="chip pop d2">📁 ไฟล์โค้ดที่มันเปิดอ่าน</div>
+    <div class="chip pop d3">💬 บทสนทนาก่อนหน้าทั้งหมด</div>
+    <div class="chip pop d4">📋 CLAUDE.md คู่มือโปรเจกต์</div>
+    <div class="chip pop d5">✏️ คำตอบที่กำลังเขียน</div>
+  </div>
+  <p class="big fadeup d5">โต๊ะนี้ <b style="color:var(--amber)">มีขนาดจำกัด</b> — และนี่คือที่มาของปัญหาที่คุณจะเจอ</p>
+</section>
+
+<!-- 7 โต๊ะเต็ม -->
+<section class="slide">
+  <h2>เมื่อโต๊ะเต็ม… ของเก่าตกโต๊ะ</h2>
+  <div class="desk">
+    <div class="chip fall" style="border-color:var(--amber)">🤝 ข้อตกลง "สถานะเป็นภาษาไทย"</div>
+    <div class="chip">💬 คุยเรื่องหน้าแรก</div>
+    <div class="chip">💬 คุยเรื่องฟอร์ม</div>
+    <div class="chip">📁 ไฟล์ 1</div><div class="chip">📁 ไฟล์ 2</div><div class="chip">📁 ไฟล์ 3</div>
+    <div class="chip">💬 แก้บั๊กรอบ 1</div><div class="chip">💬 แก้บั๊กรอบ 2</div>
+    <div class="chip blink" style="border-color:var(--red)">🆕 งานใหม่ที่เพิ่งสั่ง</div>
+  </div>
+  <p class="big fadeup d3">สิ่งแรกที่หายไปมักเป็น <b style="color:var(--red)">ข้อตกลงที่คุยกันไว้ตอนต้น</b> — AI จะเริ่ม "ลืม" ทั้งที่มันเคยทำถูก</p>
+</section>
+
+<!-- 8 อาการ -->
+<section class="slide">
+  <h2>อาการที่จะเจอจริง เมื่อคุยยาวเกินไป</h2>
+  <div class="panel">
+    <table>
+      <tr><td>🐢</td><td class="fadeup d1">ตอบช้าลงเรื่อย ๆ</td></tr>
+      <tr><td>🤔</td><td class="fadeup d2">ลืมกติกาที่ตกลงกันไว้ตอนต้น</td></tr>
+      <tr><td>🔀</td><td class="fadeup d3">แก้ไฟล์ที่ไม่ได้ถูกสั่งให้แก้</td></tr>
+      <tr><td>🔁</td><td class="fadeup d4">ถามซ้ำเรื่องที่เคยบอกไปแล้ว</td></tr>
+    </table>
+  </div>
+  <div class="meter"><b></b></div>
+  <p class="big fadeup d5">เจอแบบนี้ <b style="color:var(--green)">ปกติมาก ไม่ใช่ความผิดคุณ</b> — โต๊ะมันเต็ม แค่นั้นเอง… และเรามีวิธีรับมือ</p>
+</section>
+
+<!-- 9 วิธีรับมือ -->
+<section class="slide">
+  <h2>เครื่องมือรับมือ 3 ตัว</h2>
+  <div class="panel">
+    <table style="font-size:3.2vh">
+      <tr class="fadeup d1"><td><kbd>/usage</kbd></td><td>👀 ดูมิเตอร์ — โต๊ะใกล้เต็มหรือยัง</td></tr>
+      <tr class="fadeup d2"><td><kbd>/compact</kbd></td><td>🗜️ สรุปเรื่องเก่าให้สั้นลง เก็บที่ว่างคืน</td></tr>
+      <tr class="fadeup d3"><td><kbd>/clear</kbd></td><td>🧹 ล้างโต๊ะเริ่มใหม่ — เมื่อเปลี่ยนงานใหม่</td></tr>
+    </table>
+  </div>
+  <p class="big fadeup d4">💡 ก่อน <kbd>/clear</kbd> ให้พิมพ์ขอ AI ว่า <i>"ช่วยสรุปสถานะงานตอนนี้"</i> แล้วคัดลอกเก็บไว้ — ล้างเสร็จค่อยวางกลับ เท่านี้ AI ก็ไม่ลืม</p>
+</section>
+
+<!-- 10 สรุป -->
+<section class="slide">
+  <h2>สรุป — สิ่งเดียวที่ต้องจำ</h2>
+  <div class="row">
+    <div class="chip pop d1" style="font-size:3vh">🤖 AI เดาเก่ง ไม่ใช่รู้จริง → <b>ตรวจเสมอ</b></div>
+    <div class="chip pop d2" style="font-size:3vh">🪙 โทเคน = เงิน → <b>สั่งสั้นแต่ชัด</b></div>
+    <div class="chip pop d3" style="font-size:3vh">🗂️ โต๊ะมีจำกัด → <b>งานใหม่ ล้างโต๊ะใหม่</b></div>
+  </div>
+  <p class="big fadeup d4">ทั้งสามข้อนี้ คือเหตุผลเบื้องหลัง <b style="color:var(--amber)">วงจร 4 จังหวะ</b> ที่เราใช้กันทั้งหลักสูตร:<br>สั่งสั้น → ขอแผน → ตรวจแผน → ลงมือทีละข้อ</p>
+  <p class="big fadeup d5" style="color:var(--dim)">❌ สิ่งที่ไม่ต้องรู้: คณิตศาสตร์ข้างใน · วิธีเทรนโมเดล · ศัพท์เทคนิคอื่น ๆ ทั้งหมด</p>
+</section>
+
+<div class="dots" id="dots"></div>
+<div class="foot">◀ ▶ หรือคลิก เพื่อเปลี่ยนหน้า · กด R เล่นแอนิเมชันหน้านี้ซ้ำ</div>
+
+<script>
+  const S=[...document.querySelectorAll('.slide')];let i=0;
+  const dots=document.getElementById('dots');
+  S.forEach(()=>dots.appendChild(document.createElement('i')));
+  function go(n){
+    i=Math.max(0,Math.min(S.length-1,n));
+    S.forEach((s,k)=>s.classList.toggle('on',k===i));
+    [...dots.children].forEach((d,k)=>d.classList.toggle('here',k===i));
+    const s=S[i];s.style.display='none';void s.offsetWidth;s.style.display='';
+  }
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key))go(i+1);
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key))go(i-1);
+    if(e.key==='r'||e.key==='R')go(i);
+    if(e.key==='Home')go(0);
+  });
+  addEventListener('click',e=>{ if(e.clientX>innerWidth*.25)go(i+1); else go(i-1); });
+  go(0);
+</script>
+</body>
+</html>

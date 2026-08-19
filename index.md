@@ -21,6 +21,7 @@
 | 🖥️ สไลด์บรรยาย | ทุกคน | [ดาวน์โหลด .pptx](materials/week6/w6-slides.pptx) · [อ่านต้นฉบับ](materials/week6/w6-slides.md) |
 | 🎬 สคริปต์สาธิต (FixIt) | ผู้สอน | [เปิดอ่าน](materials/week6/w6-demo-fixit.md) |
 | 📋 ใบงาน Workshop | ผู้เรียน | [เปิดอ่าน](materials/week6/w6-lab-leaveeasy.md) |
+| 🎞️ สไลด์เสริมมีแอนิเมชัน: **AI ทำงานยังไง** (โทเคน · ความจำ · ข้อจำกัด) | ทุกคน | [เปิดฉาย](materials/shared/supplements/llm-basics.html) · [บทพูดผู้สอน](materials/shared/supplements/llm-basics-script.md) |
 
 ## ⭐ สัปดาห์ที่ 7 — CRUD + ล็อกอิน + ขึ้นออนไลน์
 
