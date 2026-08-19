@@ -244,7 +244,7 @@ def build_cover(prs, meta):
     r.text = meta.get("title", "")
     style_run(r, size=SIZE_TITLE_COVER, bold=True, color=COLOR_ACCENT)
 
-    for key, size, color in (("subtitle", Pt(22), COLOR_TEXT), ("date", Pt(18), COLOR_MUTED)):
+    for key, size, color in (("subtitle", Pt(22), COLOR_TEXT), ("session_date", Pt(18), COLOR_MUTED), ("date", Pt(18), COLOR_MUTED)):
         if meta.get(key):
             p2 = tf.add_paragraph()
             p2.space_before = Pt(14)

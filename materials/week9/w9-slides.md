@@ -2,7 +2,7 @@
 week: 9
 title: "Sprint 1 Review — ให้ AI ทดสอบแทนเรา แล้วเตรียมส่งมอบ"
 subtitle: "ADT-RAISE Batch 2 · Module 2 · สัปดาห์ที่ 9 · สัปดาห์ปิด Module"
-date: "19 กันยายน 2569"
+session_date: "19 กันยายน 2569"
 ---
 
 ## เปิดคาบ — สัปดาห์ปิด Module 2
