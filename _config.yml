@@ -16,3 +16,9 @@ exclude:
   - CLAUDE.md
   - plan.md
   - "*.py"
+  # เอกสารผู้สอน — เก็บใน repo ไม่ขึ้นเว็บ
+  - "materials/week6/w6-demo-fixit.md"
+  - "materials/week7/w7-demo-fixit.md"
+  - "materials/week8/w8-demo-fixit.md"
+  - "materials/week9/w9-demo-fixit.md"
+  - "materials/shared/supplements/llm-basics-script.md"
