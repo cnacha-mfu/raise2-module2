@@ -1,0 +1,135 @@
+// ─────────────────────────────────────────────────────────────
+// ตัวอย่าง Security Rules — "ยามเฝ้าประตูโฟลเดอร์"
+// ใช้ประกอบสัปดาห์ที่ 8 · ตัวอย่างนี้เขียนจากระบบ LeaveEasy
+//
+// ⚠️ ห้ามคัดลอกไปวางทั้งชุดโดยไม่อ่าน
+//    โครงงานของคุณมีโฟลเดอร์ชื่ออื่น ต้องแก้ให้ตรงกับของตัวเอง
+//    ใช้ไฟล์นี้เป็น "ตัวอย่างหน้าตา" เพื่อเทียบว่าของคุณครบ 5 ข้อหรือยัง
+//
+// 💡 วิธีที่แนะนำ: ให้ Claude เขียนกฎให้ตามเช็กลิสต์ 5 ข้อ
+//    แล้วคุณเอาไฟล์นี้มาเทียบว่าครบไหม
+// ─────────────────────────────────────────────────────────────
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ───────── ตัวช่วยที่ใช้ซ้ำในหลายที่ ─────────
+
+    // ล็อกอินอยู่หรือเปล่า
+    function loggedIn() {
+      return request.auth != null;
+    }
+
+    // คนที่ล็อกอินอยู่ คือคนคนนี้ใช่ไหม
+    function isMe(userId) {
+      return loggedIn() && request.auth.uid == userId;
+    }
+
+    // คนที่ล็อกอินอยู่ เป็นหัวหน้าหรือเปล่า
+    // (อ่าน role จากไฟล์ของเขาในโฟลเดอร์ users)
+    function isManager() {
+      return loggedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'manager';
+    }
+
+
+    // ───────── 📁 users — ข้อมูลผู้ใช้ ─────────
+    match /users/{userId} {
+      // ✅ ข้อ 1: ไม่ล็อกอิน อ่านไม่ได้เลย
+      allow read: if loggedIn();
+
+      // ✅ ข้อ 2: แก้ไขได้เฉพาะไฟล์ของตัวเอง
+      allow create: if isMe(userId);
+      allow update: if isMe(userId);
+
+      // ห้ามลบบัญชีคนอื่น และห้ามลบตัวเองผ่านหน้าเว็บ
+      allow delete: if false;
+    }
+
+
+    // ───────── 📁 leaveTypes — ประเภทการลา ─────────
+    match /leaveTypes/{typeId} {
+      allow read: if loggedIn();
+
+      // ✅ ข้อ 4: การกระทำสำคัญ ทำได้เฉพาะบทบาทที่มีสิทธิ์
+      allow write: if isManager();
+    }
+
+
+    // ───────── 📁 leaveRequests — ใบขอลา ─────────
+    match /leaveRequests/{requestId} {
+
+      // ✅ ข้อ 3: อ่านได้เฉพาะใบของตัวเอง ยกเว้นหัวหน้าที่เห็นได้หมด
+      allow read: if isManager()
+                  || (loggedIn() && resource.data.requesterId == request.auth.uid);
+
+      // ✅ ข้อ 2: ยื่นใบลาใหม่ได้เฉพาะในชื่อตัวเอง
+      //    (กันไม่ให้ยื่นใบลาสวมชื่อคนอื่น)
+      allow create: if loggedIn()
+                    && request.resource.data.requesterId == request.auth.uid
+                    && request.resource.data.status == 'รอพิจารณา';
+
+      // ✅ ข้อ 4: เจ้าของแก้เนื้อหาได้ตอนยังไม่พิจารณา
+      //           แต่เปลี่ยนสถานะเป็นอนุมัติได้เฉพาะหัวหน้า
+      allow update: if isManager()
+                    || (loggedIn()
+                        && resource.data.requesterId == request.auth.uid
+                        && resource.data.status == 'รอพิจารณา'
+                        && request.resource.data.status == 'รอพิจารณา');
+
+      // เจ้าของยกเลิกใบของตัวเองได้ตอนยังไม่พิจารณา
+      allow delete: if loggedIn()
+                    && resource.data.requesterId == request.auth.uid
+                    && resource.data.status == 'รอพิจารณา';
+
+
+      // ───── ✅ ข้อ 5: อย่าลืมโฟลเดอร์ย่อย ─────
+      // ⚠️ จุดที่คนลืมมากที่สุด
+      //    กฎของ leaveRequests ข้างบน ไม่ครอบโฟลเดอร์ย่อยนี้อัตโนมัติ
+      //    ถ้าไม่เขียนบล็อกนี้ ความเห็นการอนุมัติจะเปิดโล่งให้ใครก็อ่านได้
+      match /approvals/{approvalId} {
+        allow read: if isManager()
+                    || (loggedIn()
+                        && get(/databases/$(database)/documents/leaveRequests/$(requestId))
+                             .data.requesterId == request.auth.uid);
+
+        // เขียนความเห็นได้เฉพาะหัวหน้า และต้องเขียนในชื่อตัวเอง
+        allow create: if isManager()
+                      && request.resource.data.authorId == request.auth.uid;
+
+        allow update, delete: if false;
+      }
+    }
+
+
+    // ───────── กันทุกอย่างที่เหลือ ─────────
+    // ถ้าลืมเขียนกฎให้โฟลเดอร์ไหน จะโดนบรรทัดนี้ปฏิเสธ
+    // ดีกว่าเปิดโล่งไว้โดยไม่รู้ตัว
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// 🧪 ทดสอบว่ากันได้จริง — ⚠️ ห้ามดูหน้าจอตัวเองอย่างเดียว
+//
+//   วิธีที่ 1  ใช้ Rules Playground ใน Firebase Console
+//             ลองสวมรอยเป็นผู้ใช้อีกคน แล้วอ่านใบลาที่ไม่ใช่ของเขา
+//             ผลต้องขึ้นว่า Denied
+//
+//   วิธีที่ 2  เปิดหน้าต่างไม่ระบุตัวตน (ไม่ล็อกอิน) แล้วเข้าเว็บ
+//             ต้องอ่านอะไรไม่ได้เลย
+//
+//   วิธีที่ 3  ให้เพื่อนสมัครบัญชีใหม่แล้วลองเจาะดูใบลาของคุณ
+//
+// 🆘 เขียนกฎแล้วระบบใช้ไม่ได้เลย (permission denied ทุกอย่าง)
+//    เป็นเรื่องปกติ — Rules ปฏิเสธเป็นค่าเริ่มต้น
+//    ให้เปิดทีละโฟลเดอร์แล้วทดสอบทีละอัน อย่าเขียนรวดเดียวทั้งไฟล์
+//
+// 📌 อย่าลืม deploy กฎขึ้นไปด้วย ไม่ใช่บันทึกไฟล์ไว้ในเครื่องอย่างเดียว
+//    "ในเครื่องได้ ออนไลน์พัง" ของ Firebase มักมาจากข้อนี้
+// ─────────────────────────────────────────────────────────────

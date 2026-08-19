@@ -1,0 +1,6 @@
+~$*.pptx
+__pycache__/
+*.pyc
+.jekyll-cache/
+_site/
+.playwright-mcp/

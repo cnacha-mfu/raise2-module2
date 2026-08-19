@@ -1,0 +1,18 @@
+title: "ADT-RAISE Batch 2 · Module 2 — MVP-Ready"
+description: "สื่อการสอน Module 2 (สัปดาห์ที่ 6–9) · ADT-RAISE Non-Degree Batch 2"
+lang: th
+theme: jekyll-theme-cayman
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true
+
+# ไฟล์ทำงานภายใน — ไม่ต้องขึ้นเว็บ
+exclude:
+  - scripts/
+  - CLAUDE.md
+  - plan.md
+  - "*.py"
