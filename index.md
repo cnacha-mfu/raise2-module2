@@ -18,7 +18,7 @@
 
 | สื่อ | สำหรับ | ลิงก์ |
 |---|---|---|
-| 🖥️ สไลด์บรรยาย | ทุกคน | [ดาวน์โหลด .pptx](materials/week6/w6-slides.pptx) · [อ่านต้นฉบับ](materials/week6/w6-slides.md) |
+| 🖥️ สไลด์บรรยาย | ทุกคน | [▶️ **เปิดดูบนเว็บ**](materials/week6/w6-slides.html) · [ดาวน์โหลด .pptx](materials/week6/w6-slides.pptx) · [ต้นฉบับ](materials/week6/w6-slides.md) |
 | 🎬 สคริปต์สาธิต (FixIt) | ผู้สอน | [เปิดอ่าน](materials/week6/w6-demo-fixit.md) |
 | 📋 ใบงาน Workshop | ผู้เรียน | [เปิดอ่าน](materials/week6/w6-lab-leaveeasy.md) |
 | 🎞️ สไลด์เสริมมีแอนิเมชัน: **AI ทำงานยังไง** (โทเคน · ความจำ · ข้อจำกัด) | ทุกคน | [เปิดฉาย](materials/shared/supplements/llm-basics.html) · [บทพูดผู้สอน](materials/shared/supplements/llm-basics-script.md) |
@@ -27,7 +27,7 @@
 
 | สื่อ | สำหรับ | ลิงก์ |
 |---|---|---|
-| 🖥️ สไลด์บรรยาย | ทุกคน | [ดาวน์โหลด .pptx](materials/week7/w7-slides.pptx) · [อ่านต้นฉบับ](materials/week7/w7-slides.md) |
+| 🖥️ สไลด์บรรยาย | ทุกคน | [▶️ **เปิดดูบนเว็บ**](materials/week7/w7-slides.html) · [ดาวน์โหลด .pptx](materials/week7/w7-slides.pptx) · [ต้นฉบับ](materials/week7/w7-slides.md) |
 | 🎬 สคริปต์สาธิต (FixIt) | ผู้สอน | [เปิดอ่าน](materials/week7/w7-demo-fixit.md) |
 | 📋 ใบงาน Workshop | ผู้เรียน | [เปิดอ่าน](materials/week7/w7-lab-leaveeasy.md) |
 
@@ -35,7 +35,7 @@
 
 | สื่อ | สำหรับ | ลิงก์ |
 |---|---|---|
-| 🖥️ สไลด์บรรยาย | ทุกคน | [ดาวน์โหลด .pptx](materials/week8/w8-slides.pptx) · [อ่านต้นฉบับ](materials/week8/w8-slides.md) |
+| 🖥️ สไลด์บรรยาย | ทุกคน | [▶️ **เปิดดูบนเว็บ**](materials/week8/w8-slides.html) · [ดาวน์โหลด .pptx](materials/week8/w8-slides.pptx) · [ต้นฉบับ](materials/week8/w8-slides.md) |
 | 🎬 สคริปต์สาธิต (FixIt) | ผู้สอน | [เปิดอ่าน](materials/week8/w8-demo-fixit.md) |
 | 📋 ใบงาน Workshop | ผู้เรียน | [เปิดอ่าน](materials/week8/w8-lab-leaveeasy.md) |
 
@@ -43,7 +43,7 @@
 
 | สื่อ | สำหรับ | ลิงก์ |
 |---|---|---|
-| 🖥️ สไลด์บรรยาย | ทุกคน | [ดาวน์โหลด .pptx](materials/week9/w9-slides.pptx) · [อ่านต้นฉบับ](materials/week9/w9-slides.md) |
+| 🖥️ สไลด์บรรยาย | ทุกคน | [▶️ **เปิดดูบนเว็บ**](materials/week9/w9-slides.html) · [ดาวน์โหลด .pptx](materials/week9/w9-slides.pptx) · [ต้นฉบับ](materials/week9/w9-slides.md) |
 | 🎬 สคริปต์สาธิต (FixIt) | ผู้สอน | [เปิดอ่าน](materials/week9/w9-demo-fixit.md) |
 | 📋 ใบงาน Workshop | ผู้เรียน | [เปิดอ่าน](materials/week9/w9-lab-leaveeasy.md) |
 
@@ -70,5 +70,7 @@
 | 9 | [กู้สถานะจบสัปดาห์ที่ 8](materials/shared/recovery/leaveeasy-week8-end.md) |
 
 ---
+
+> ▶️ **วิธีใช้สไลด์บนเว็บ:** ลูกศร/คลิกเปลี่ยนหน้า · กด **O** ดูภาพรวมทุกหน้าแล้วคลิกกระโดด · กด **N** เปิดบันทึกผู้บรรยาย · แชร์ลิงก์เจาะหน้าได้ เช่น `...w6-slides.html#12`
 
 *ผลิตด้วย Claude Code · อัปเดตล่าสุดดูจากประวัติ commit*

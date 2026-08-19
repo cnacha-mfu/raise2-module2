@@ -51,6 +51,7 @@ Raise2/
 ```
 python scripts/build_slides.py "materials/week6/w6-slides.md"
 python scripts/check_slides.py
+python scripts/build_html_slides.py   # สร้างเวอร์ชันเว็บ (wN-slides.html) ทุกสัปดาห์
 ```
 
 ตรวจก่อนใช้จริงทุกครั้ง: เช็กลิสต์ใน `CLAUDE.md` ข้อ 9
