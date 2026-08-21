@@ -4,3 +4,7 @@ __pycache__/
 .jekyll-cache/
 _site/
 .playwright-mcp/
+open-router-apikey.xlsx
+*apikey*
+*api-key*
+*.key
