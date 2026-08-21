@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FixIt — แดชบอร์ดสรุป</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="dashboard">
+
+<div class="proto-banner">🧪 นี่คือ prototype — ยังไม่มีฐานข้อมูล ลองกรอกอะไรแล้วกดรีเฟรชดู ข้อมูลจะหายทั้งหมด · ใน Module 2 เราจะทำให้มัน 'จำได้'</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">🎬 FixIt</a>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="tickets.html">รายการใบแจ้งซ่อม</a>
+    <a href="new-ticket.html">แจ้งซ่อมใหม่</a>
+    <a href="categories.html">หมวดหมู่</a>
+    <a href="dashboard.html" class="active">แดชบอร์ด</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div>
+      <h1>📊 แดชบอร์ดสรุป</h1>
+      <p class="page-sub">ตัวเลขนับจากข้อมูลจริงในหน่วยความจำ — กดที่กล่องเพื่อไปหน้ารายการที่กรองสถานะนั้นไว้</p>
+    </div>
+  </div>
+
+  <div class="stat-grid" id="stat-grid"></div>
+
+  <div class="card">
+    <h2>ใบแจ้งซ่อม 5 รายการล่าสุด</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>หัวข้อ</th>
+            <th>สถานะ</th>
+            <th>วันที่แจ้ง</th>
+          </tr>
+        </thead>
+        <tbody id="latest-rows"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">FixIt prototype · ADT-RAISE Batch 2 · Module 2 · ข้อมูลทุกชื่อเป็นชื่อสมมติ</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

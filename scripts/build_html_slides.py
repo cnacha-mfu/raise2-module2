@@ -137,6 +137,8 @@ def render_table(rows):
 
 def render_slide(sl):
     cls = {"section": "sec", "big": "bigslide", "slide": "std", "cover": "cover"}[sl["type"]]
+    if sl.get("title", "").lstrip().startswith("🎬"):
+        cls += " demo"
     parts = [f'<section class="sl {cls}">']
     if sl["type"] == "cover":
         parts.append(f'<div class="secin"><div class="covertag">{esc(sl.get("tag",""))}</div>'
@@ -164,6 +166,8 @@ def render_slide(sl):
                     parts.append(f"<p>{inline(item[1])}</p>")
         if bl:
             parts.append("<ul>" + "".join(bl) + "</ul>")
+    if "demo" in cls:
+        parts.append('<div class="demobadge">🎬 สลับไปหน้าจอสาธิตสด</div>')
     if sl["notes"]:
         parts.append('<div class="note">🗒️ ' + "<br>".join(inline(n) for n in sl["notes"]) + "</div>")
     parts.append("</section>")
@@ -248,6 +252,14 @@ td{padding:.65cqw 1cqw;border-bottom:.12cqw solid #e5e7eb;line-height:1.5}
 .fhead{font-size:1.6cqw;font-weight:700;min-width:22cqw}
 .note{display:none;background:#111827;color:#e5e7eb;border-radius:.7cqw;padding:1cqw 1.4cqw;
   font-size:1.4cqw;line-height:1.6;margin-top:auto;flex:none}
+/* ── สไลด์จุดสลับไปสาธิตสด ── */
+.sl.demo{background:#FFF3DF;border-left:.9cqw solid var(--accent);
+  background-image:radial-gradient(circle at 92% 88%, rgba(232,164,60,.18) 0 18cqw, transparent 18cqw)}
+.sl.demo h1{color:#8A5400;border-bottom-color:#E0A02C}
+.sl.demo::after{content:"🎬";position:absolute;right:2.5cqw;bottom:1cqw;font-size:9cqw;opacity:.22;pointer-events:none}
+.demobadge{position:absolute;top:1.4cqw;right:2.4cqw;background:var(--accent);color:var(--accent-ink);
+  border-radius:2cqw;padding:.45cqw 1.5cqw;font-size:1.25cqw;font-weight:700}
+.tbox .demobadge{display:none}
 body.notes .stage .note{display:block}
 .tbox .note{display:none!important}
 @media (max-width:600px){.nav{display:none}.titles p{display:none}}

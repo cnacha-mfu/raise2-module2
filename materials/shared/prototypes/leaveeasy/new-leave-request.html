@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LeaveEasy — ยื่นใบลาใหม่</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="new-leave-request">
+
+<div class="proto-banner">🧪 นี่คือ prototype — ยังไม่มีฐานข้อมูล ลองกรอกอะไรแล้วกดรีเฟรชดู ข้อมูลจะหายทั้งหมด · ใน Module 2 เราจะทำให้มัน 'จำได้'</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">🔧 LeaveEasy</a>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="leave-requests.html">รายการใบลา</a>
+    <a href="new-leave-request.html" class="active">ยื่นใบลาใหม่</a>
+    <a href="leave-types.html">ประเภทการลา</a>
+    <a href="dashboard.html">แดชบอร์ด</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div>
+      <h1>📝 ยื่นใบลาใหม่</h1>
+      <p class="page-sub">กรอกให้ครบทุกช่อง แล้วกดบันทึก — ใบใหม่จะไปโผล่ในหน้ารายการทันที</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="form-error" id="form-error"></div>
+    <form id="new-request-form" novalidate>
+      <div class="form-group">
+        <label for="title">หัวข้อ</label>
+        <input type="text" id="title" placeholder="เช่น ลาพักร้อนไปเที่ยวกับครอบครัว">
+      </div>
+      <div class="form-group">
+        <label for="reason">เหตุผลการลา</label>
+        <textarea id="reason" placeholder="เล่าเหตุผลที่ขอลา เพื่อให้หัวหน้าพิจารณาได้โดยไม่ต้องถามเพิ่ม"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="leave-type">ประเภทการลา</label>
+        <select id="leave-type">
+          <option value="">— เลือกประเภทการลา —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="start-date">วันที่เริ่มลา</label>
+        <input type="date" id="start-date">
+      </div>
+      <div class="form-group">
+        <label for="end-date">วันที่สิ้นสุด</label>
+        <input type="date" id="end-date">
+        <div class="hint">ยังไม่มีระบบล็อกอิน — prototype จะบันทึกชื่อผู้ขอลาให้เป็น "สมชาย ใจดี" (ชื่อสมมติ)</div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">บันทึก</button>
+        <a class="btn btn-secondary" href="leave-requests.html">ยกเลิก</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">LeaveEasy prototype · ADT-RAISE Batch 2 · Module 2 · ข้อมูลทุกชื่อเป็นชื่อสมมติ</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

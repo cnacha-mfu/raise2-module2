@@ -81,7 +81,9 @@ def check(path):
             if sh.top is None or sh.height is None:
                 continue
             bottom, right = sh.top + sh.height, sh.left + sh.width
-            full_bleed = sh.width > Inches(13) and sh.height > Inches(7)
+            has_text = sh.has_text_frame and sh.text_frame.text.strip()
+            # พื้นหลังเต็มจอ หรือแถบตกแต่งสูงเต็มจอที่ไม่มีข้อความ — ไม่นับว่าทับ footer
+            full_bleed = (sh.width > Inches(13) and sh.height > Inches(7)) or                          (sh.height > Inches(7) and not has_text)
 
             # 1) ล้นขอบสไลด์
             if bottom > SLIDE_H + TOL:

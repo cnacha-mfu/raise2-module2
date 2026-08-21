@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADT-RAISE Batch 2 · Module 2 — MVP-Ready</title>
+<meta name="description" content="สื่อการสอน Module 2 (สัปดาห์ที่ 6–9) · ADT-RAISE Non-Degree Batch 2">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#131A3B; --panel:#1B2452; --panel2:#222C5E; --hairline:#2A3568;
+    --text:#EEF0F8; --muted:#8E96BC; --accent:#E8A43C; --accent-ink:#1B2452;
+    --green:#5BBE7E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ground);color:var(--text);
+    font-family:'IBM Plex Sans Thai','Leelawadee UI','Sarabun','Segoe UI',sans-serif;
+    line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:70rem;margin:0 auto;padding:0 1.25rem}
+
+  header.top{border-bottom:1px solid var(--hairline)}
+  .topin{display:flex;align-items:center;gap:.75rem;padding:.85rem 0}
+  .mark{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex:none}
+  .topin h1{font-size:1rem;font-weight:700}
+  .topin p{font-size:.75rem;color:var(--muted)}
+  .topin .right{margin-left:auto;font-size:.78rem;color:var(--muted);text-align:right}
+  .topin .right a{color:var(--accent)}
+
+  .hero{padding:2.6rem 0 1.8rem}
+  .hero .kicker{color:var(--accent);font-size:.85rem;letter-spacing:.14em;font-weight:600}
+  .hero h2{font-size:2rem;line-height:1.3;margin:.3rem 0 .6rem}
+  .hero .sub{color:var(--muted);max-width:46rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.1rem}
+  .chip{border:1px solid var(--hairline);background:var(--panel);border-radius:2rem;
+    padding:.3rem .95rem;font-size:.8rem;color:var(--muted)}
+  .chip b{color:var(--text);font-weight:600}
+
+  .sechead{display:flex;align-items:baseline;gap:.8rem;margin:2.4rem 0 1rem}
+  .sechead h3{font-size:1.15rem}
+  .sechead span{color:var(--muted);font-size:.8rem}
+  .sechead::after{content:"";flex:1;border-top:1px solid var(--hairline)}
+
+  .weeks{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem}
+  .card{background:var(--panel);border:1px solid var(--hairline);border-radius:.8rem;
+    padding:1.25rem 1.25rem 1rem;display:flex;flex-direction:column;gap:.55rem;
+    transition:border-color .15s, transform .15s}
+  .card:hover{border-color:var(--accent)}
+  .whead{display:flex;align-items:center;gap:.7rem}
+  .wno{width:2.5rem;height:2.5rem;border-radius:.6rem;background:var(--panel2);
+    border:1px solid var(--hairline);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;flex:none}
+  .wno small{font-size:.55rem;color:var(--muted);line-height:1}
+  .wno b{font-size:1.05rem;color:var(--accent);line-height:1.1}
+  .whead .date{font-size:.75rem;color:var(--muted)}
+  .whead h4{font-size:1rem;line-height:1.35}
+  .card .deliver{font-size:.8rem;color:var(--muted);border-left:3px solid var(--hairline);
+    padding-left:.7rem}
+  .card .deliver b{color:var(--text);font-weight:600}
+  .actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:auto;padding-top:.5rem}
+  .btn{display:inline-flex;align-items:center;gap:.35rem;border-radius:.5rem;
+    padding:.38rem .8rem;font-size:.8rem;font-weight:600;border:1px solid var(--hairline);
+    background:var(--panel2);transition:background .15s,color .15s,border-color .15s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .btn.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
+
+  .format{background:var(--panel);border:1px solid var(--hairline);border-left:4px solid var(--accent);
+    border-radius:.8rem;padding:1.2rem 1.4rem;margin-top:1rem}
+  .format h4{font-size:.95rem;margin-bottom:.4rem}
+  .format p{font-size:.85rem;color:var(--muted)}
+  .format p b{color:var(--text);font-weight:600}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem;background:var(--panel);
+    border:1px solid var(--hairline);border-radius:.8rem;overflow:hidden}
+  th{background:var(--panel2);text-align:left;padding:.6rem .9rem;font-weight:600;font-size:.8rem}
+  td{padding:.6rem .9rem;border-top:1px solid var(--hairline);vertical-align:top}
+  td a{color:var(--accent);font-weight:600}
+  td .dim{color:var(--muted);font-size:.78rem}
+  .tablewrap{overflow-x:auto;border-radius:.8rem}
+
+  footer{border-top:1px solid var(--hairline);margin-top:3rem;padding:1.4rem 0 2.2rem;
+    font-size:.78rem;color:var(--muted)}
+  footer b{color:var(--text)}
+  footer .rows{display:flex;flex-direction:column;gap:.45rem}
+  kbd{background:var(--panel2);border:1px solid var(--hairline);border-radius:.35rem;
+    padding:.05rem .45rem;font-family:Consolas,monospace;font-size:.9em;color:var(--accent)}
+  @media (max-width:600px){.hero h2{font-size:1.5rem}.topin .right{display:none}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap topin">
+  <div class="mark">M2</div>
+  <div><h1>Module 2 · MVP-Ready</h1><p>ADT-RAISE Non-Degree Batch 2 · มหาวิทยาลัยแม่ฟ้าหลวง</p></div>
+  <div class="right"><a href="https://raisemfu-adt.github.io/batch2-student-handbook/">📖 คู่มือผู้เรียน Batch 2</a></div>
+</div></header>
+
+<div class="wrap">
+
+<section class="hero">
+  <div class="kicker">สื่อการสอน · สัปดาห์ที่ 6–9</div>
+  <h2>จากต้นแบบ สู่ระบบจริงที่ออนไลน์ ปลอดภัย และมีผู้ช่วย AI</h2>
+  <p class="sub">4 สัปดาห์ · เว็บ prototype จาก Module 1 จะกลายเป็นระบบที่เก็บข้อมูลจริง มีล็อกอิน ขึ้นออนไลน์
+     มีผู้ช่วย AI ทำงานให้ และผ่านการทดสอบอัตโนมัติ — ปิดท้ายด้วย Sprint 1 Review</p>
+  <div class="chips">
+    <div class="chip">🗓️ <b>29 ส.ค. – 22 ก.ย. 2569</b></div>
+    <div class="chip">📖 Lecture เสาร์ <b>09:00–12:00</b></div>
+    <div class="chip">🔧 Workshop เสาร์ <b>13:00–16:00</b></div>
+    <div class="chip">💬 Consult อาทิตย์/อังคาร <b>09:00–12:00</b> (นัดล่วงหน้า)</div>
+    <div class="chip">📤 ส่งงานผ่าน <b>Google Classroom</b></div>
+  </div>
+</section>
+
+<div class="sechead"><h3>📅 รายสัปดาห์</h3><span>สไลด์เปิดดูบนเว็บได้ทันที · ใบงานใช้ในคาบบ่าย</span></div>
+
+<div class="weeks">
+  <div class="card">
+    <div class="whead"><div class="wno"><small>สัปดาห์</small><b>6</b></div>
+      <div><h4>🗄️ Setup + Firestore</h4><div class="date">เสาร์ 29 ส.ค. · ระบบเริ่มมีความจำ</div></div></div>
+    <div class="deliver">📦 ส่งมอบ: <b>Repo + หน้าเว็บครบ + Firestore มีข้อมูลจริง</b></div>
+    <div class="actions">
+      <a class="btn primary" href="materials/week6/w6-slides.html">▶ สไลด์</a>
+      <a class="btn" href="materials/week6/w6-slides.pptx">⬇ .pptx</a>
+      <a class="btn" href="materials/week6/w6-lab-leaveeasy.html">📋 ใบงาน</a>
+      <a class="btn" href="materials/shared/supplements/llm-basics.html">🎞️ AI ทำงานยังไง</a>
+      <a class="btn" href="materials/shared/prototypes/fixit/index.html">🧪 ต้นแบบ FixIt</a>
+      <a class="btn" href="materials/shared/prototypes/leaveeasy/index.html">🧪 ต้นแบบ LeaveEasy</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="whead"><div class="wno"><small>สัปดาห์</small><b>7</b></div>
+      <div><h4>⭐ CRUD + ล็อกอิน + ขึ้นออนไลน์</h4><div class="date">เสาร์ 5 ก.ย. · ระบบรู้จักผู้ใช้และออกสู่โลก</div></div></div>
+    <div class="deliver">📦 ส่งมอบ: <b>CLAUDE.md + GitHub + CRUD + URL ออนไลน์</b></div>
+    <div class="actions">
+      <a class="btn primary" href="materials/week7/w7-slides.html">▶ สไลด์</a>
+      <a class="btn" href="materials/week7/w7-slides.pptx">⬇ .pptx</a>
+      <a class="btn" href="materials/week7/w7-lab-leaveeasy.html">📋 ใบงาน</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="whead"><div class="wno"><small>สัปดาห์</small><b>8</b></div>
+      <div><h4>🤖 Agentic AI + ปิดข้อมูล + Reviewer</h4><div class="date">เสาร์ 12 ก.ย. · ระบบมียามเฝ้าและมีผู้ช่วย</div></div></div>
+    <div class="deliver">📦 ส่งมอบ: <b>ระบบออนไลน์ปลอดภัย + ผู้ช่วย AI + Reviewer</b></div>
+    <div class="actions">
+      <a class="btn primary" href="materials/week8/w8-slides.html">▶ สไลด์</a>
+      <a class="btn" href="materials/week8/w8-slides.pptx">⬇ .pptx</a>
+      <a class="btn" href="materials/week8/w8-lab-leaveeasy.html">📋 ใบงาน</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="whead"><div class="wno"><small>สัปดาห์</small><b>9</b></div>
+      <div><h4>🎤 Tester + Sprint 1 Review</h4><div class="date">เสาร์ 19 ก.ย. · ระบบพิสูจน์ตัวเองได้</div></div></div>
+    <div class="deliver">📦 ส่งมอบ: <b>ชุดทดสอบผ่าน + Sprint 1 (MVP ส่งมอบ)</b></div>
+    <div class="actions">
+      <a class="btn primary" href="materials/week9/w9-slides.html">▶ สไลด์</a>
+      <a class="btn" href="materials/week9/w9-slides.pptx">⬇ .pptx</a>
+      <a class="btn" href="materials/week9/w9-lab-leaveeasy.html">📋 ใบงาน</a>
+    </div>
+  </div>
+</div>
+
+<div class="format">
+  <h4>🖥️ รูปแบบคาบบ่าย (Workshop) — ทุกคนลงมือเอง ไม่มีใครนั่งดูเฉย ๆ</h4>
+  <p><b>สมาชิกทุกคนทำใบงานบนเครื่องของตัวเอง ไปพร้อมกันทั้งกลุ่ม</b> โดยมี <b>"คนนำจอ" 1 คน</b>
+     แชร์หน้าจอในห้องย่อยแล้วเล่าสิ่งที่กำลังทำไปด้วย — คนอื่นทำตามจังหวะเดียวกัน ใครติดให้พูดทันที
+     และ<b>หมุนคนนำจอทุก Checkpoint</b> · ขั้นที่เข้าที่ส่วนกลางของกลุ่ม (push ขึ้น repo กลุ่ม · ตั้งค่า Firebase · deploy)
+     คนนำจอรอบนั้นเป็นคนทำ · ทุกคนต้องมี commit ในชื่อตัวเองทุกสัปดาห์</p>
+</div>
+
+<div class="sechead"><h3>🧰 เอกสารกลาง</h3><span>ใช้ได้ทุกสัปดาห์</span></div>
+
+<div class="grid2">
+  <div class="tablewrap"><table>
+    <tr><th colspan="2">อ้างอิงและตัวอย่าง</th></tr>
+    <tr><td><a href="materials/shared/glossary.html">📖 อภิธานศัพท์</a></td>
+        <td class="dim">ศัพท์เทคนิค → คำเทียบภาษาคน + คำสั่ง Claude Code ทั้ง 6 ตัว</td></tr>
+    <tr><td><a href="materials/shared/specs/fixit-spec.html">📄 Spec — FixIt</a></td>
+        <td class="dim">ระบบแจ้งซ่อม — ตัวอย่างที่ผู้สอนใช้สาธิตสด ·
+            <a href="materials/shared/prototypes/fixit/index.html">🧪 เปิดต้นแบบ</a></td></tr>
+    <tr><td><a href="materials/shared/specs/leaveeasy-spec.html">📄 Spec — LeaveEasy</a></td>
+        <td class="dim">ระบบขอลา — เฉลยตัวอย่างประกอบใบงาน ·
+            <a href="materials/shared/prototypes/leaveeasy/index.html">🧪 เปิดต้นแบบ</a></td></tr>
+    <tr><td><a href="materials/shared/templates/CLAUDE-md-template.html">📁 เทมเพลต CLAUDE.md</a></td>
+        <td class="dim">พร้อม <a href="materials/shared/templates/gitignore-template.txt">.gitignore</a> ·
+            <a href="materials/shared/templates/firestore-rules-example.txt">ตัวอย่าง Security Rules</a> ·
+            <a href="materials/shared/templates/playwright-mcp-setup.html">ตั้งค่า Playwright MCP</a></td></tr>
+  </table></div>
+
+  <div class="tablewrap"><table>
+    <tr><th colspan="2">💻 โค้ดระบบตัวอย่าง — clone ไปเปิดดูได้</tr>
+    <tr><td><a href="https://github.com/cnacha-mfu/fixit">🎬 fixit</a></td>
+        <td class="dim">ระบบแจ้งซ่อมที่ผู้สอนใช้สาธิต · แท็ก <code>week6-start</code> → <code>week9-end</code></td></tr>
+    <tr><td><a href="https://github.com/cnacha-mfu/leaveeasy">🔧 leaveeasy</a></td>
+        <td class="dim">เฉลยตัวอย่างประกอบใบงาน · แท็กชุดเดียวกัน</td></tr>
+    <tr><td colspan="2" class="dim">⚠️ <b>ใช้ดูเทียบเท่านั้น ห้าม fork มาส่งเป็นงานกลุ่ม</b> —
+        คาบบ่ายกลุ่มทำโครงงานของตัวเอง และตอนนำเสนอต้องอธิบายโค้ดตัวเองได้ ·
+        เปิดสถานะสัปดาห์ที่ต้องการ: <kbd>git checkout week7-end</kbd></td></tr>
+  </table></div>
+
+  <div class="tablewrap"><table>
+    <tr><th colspan="2">🛟 ชุดกู้สถานะ — ทำสัปดาห์ก่อนไม่ทัน/โปรเจกต์พัง</th></tr>
+    <tr><td><a href="materials/shared/recovery/leaveeasy-week6-end.html">กู้สถานะจบสัปดาห์ที่ 6</a></td>
+        <td class="dim">ใช้ก่อนเริ่มใบงานสัปดาห์ที่ 7</td></tr>
+    <tr><td><a href="materials/shared/recovery/leaveeasy-week7-end.html">กู้สถานะจบสัปดาห์ที่ 7</a></td>
+        <td class="dim">ใช้ก่อนเริ่มใบงานสัปดาห์ที่ 8</td></tr>
+    <tr><td><a href="materials/shared/recovery/leaveeasy-week8-end.html">กู้สถานะจบสัปดาห์ที่ 8</a></td>
+        <td class="dim">ใช้ก่อนเริ่มใบงานสัปดาห์ที่ 9</td></tr>
+    <tr><td colspan="2" class="dim"><a href="materials/shared/recovery/README.html">วิธีใช้</a> —
+        วาง prompt ทีละชุดตามไฟล์ ประมาณ 10–15 นาที · เป็นชุด prompt ไม่ใช่โค้ดสำเร็จ</td></tr>
+  </table></div>
+</div>
+
+</div><!-- /wrap -->
+
+<footer><div class="wrap rows">
+  <div>▶️ <b>วิธีใช้สไลด์บนเว็บ:</b> ลูกศรหรือปุ่ม ‹ › เปลี่ยนหน้า · คลิกภาพย่อด้านล่างเพื่อกระโดดหน้า ·
+       กด <kbd>F</kbd> เต็มจอ · แชร์ลิงก์เจาะหน้าได้ เช่น <kbd>...w6-slides.html#12</kbd></div>
+  <div>🎬 <b>สำหรับผู้สอน:</b> สคริปต์สาธิตและบทพูดไม่อยู่บนเว็บ — เปิดจาก repo:
+       <kbd>materials/weekN/wN-demo-fixit.md</kbd> · ในสไลด์ กด <kbd>N</kbd> เพื่อเปิดบันทึกผู้บรรยาย</div>
+  <div>ADT-RAISE Non-Degree Batch 2 · Module 2: MVP-Ready · ผลิตด้วย Claude Code</div>
+</div></footer>
+
+</body>
+</html>

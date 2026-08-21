@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LeaveEasy — ระบบขอลาออนไลน์ (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+<div class="proto-banner">🧪 นี่คือ prototype — ยังไม่มีฐานข้อมูล ลองกรอกอะไรแล้วกดรีเฟรชดู ข้อมูลจะหายทั้งหมด · ใน Module 2 เราจะทำให้มัน 'จำได้'</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">🔧 LeaveEasy</a>
+  <nav>
+    <a href="index.html" class="active">หน้าแรก</a>
+    <a href="leave-requests.html">รายการใบลา</a>
+    <a href="new-leave-request.html">ยื่นใบลาใหม่</a>
+    <a href="leave-types.html">ประเภทการลา</a>
+    <a href="dashboard.html">แดชบอร์ด</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>🔧 LeaveEasy — ระบบขอลาออนไลน์</h1>
+    <p>รวมทุกใบลาไว้ที่เดียว — พนักงานยื่นใบลาผ่านหน้าเว็บ หัวหน้าพิจารณา อนุมัติหรือไม่อนุมัติ แล้วผลถูกบันทึกไว้ให้ทุกฝ่ายเปิดดูย้อนหลังได้</p>
+  </section>
+
+  <section class="menu-grid">
+    <a class="menu-card" href="leave-requests.html">
+      <div class="icon">📋</div>
+      <h3>รายการใบลา</h3>
+      <p>ดูใบขอลาทั้งหมด พร้อมป้ายสถานะ กดแถวเพื่อเปิดรายละเอียด</p>
+    </a>
+    <a class="menu-card" href="new-leave-request.html">
+      <div class="icon">📝</div>
+      <h3>ยื่นใบลาใหม่</h3>
+      <p>กรอกฟอร์มขอลา ระบบสร้างใบลาสถานะ "รอพิจารณา" ให้</p>
+    </a>
+    <a class="menu-card" href="leave-request-detail.html?id=lr001">
+      <div class="icon">🔍</div>
+      <h3>รายละเอียด + ความเห็น</h3>
+      <p>เปิดดูใบหนึ่งใบแบบเต็ม อนุมัติ/ไม่อนุมัติ และเขียนความเห็น (ตัวอย่าง: ใบ lr001)</p>
+    </a>
+    <a class="menu-card" href="leave-types.html">
+      <div class="icon">🗂️</div>
+      <h3>จัดการประเภทการลา</h3>
+      <p>เพิ่ม แก้ ลบ ประเภทการลา เช่น ลาพักร้อน ลาป่วย ลากิจ</p>
+    </a>
+    <a class="menu-card" href="dashboard.html">
+      <div class="icon">📊</div>
+      <h3>แดชบอร์ดสรุป</h3>
+      <p>ตัวเลขนับใบลาตามสถานะ และ 5 รายการล่าสุด</p>
+    </a>
+  </section>
+
+  <section class="card" style="margin-top:1.25rem">
+    <h2>prototype นี้คืออะไร</h2>
+    <p>นี่คือหน้าเว็บตัวอย่างของระบบ LeaveEasy ที่ใช้เป็นเฉลยตัวอย่างในคาบ Lab — กดดูได้ทุกหน้า กรอกฟอร์มได้จริง แต่ข้อมูลทั้งหมดอยู่ในหน่วยความจำของเบราว์เซอร์เท่านั้น รีเฟรชเมื่อไรข้อมูลกลับเป็นชุดเดิม ใน Module 2 เราจะต่อระบบนี้เข้ากับฐานข้อมูลจริง (Firestore) เพื่อให้มัน "จำได้"</p>
+  </section>
+</main>
+
+<footer class="site-footer">LeaveEasy prototype · ADT-RAISE Batch 2 · Module 2 · ข้อมูลทุกชื่อเป็นชื่อสมมติ</footer>
+
+</body>
+</html>

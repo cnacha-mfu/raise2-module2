@@ -73,6 +73,11 @@ COLOR_PROMPT_BG   = RGBColor(0xFF, 0xF7, 0xE6)
 COLOR_PROMPT_LINE = RGBColor(0xE0, 0xA0, 0x2C)
 COLOR_PROMPT_LBL  = RGBColor(0xA8, 0x6C, 0x0A)
 
+# สไลด์จุดสลับไปสาธิตสด (หัวข้อขึ้นต้นด้วย 🎬)
+COLOR_DEMO_BG    = RGBColor(0xFF, 0xF3, 0xDF)   # พื้นเหลืองอ่อน
+COLOR_DEMO_LINE  = RGBColor(0xE0, 0xA0, 0x2C)   # แถบส้ม
+COLOR_DEMO_TITLE = RGBColor(0x8A, 0x54, 0x00)
+
 SIZE_TITLE_COVER   = Pt(40)
 SIZE_TITLE_SECTION = Pt(40)
 SIZE_TITLE_SLIDE   = Pt(36)
@@ -316,6 +321,24 @@ def _bullet_height(item, size):
 def build_content(prs, s, index, md_dir, missing_images, overflow_slides):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
+    is_demo = bool(s["title"]) and s["title"].lstrip().startswith("🎬")
+    if is_demo:
+        bg = slide.shapes.add_shape(1, 0, 0, SLIDE_W, SLIDE_H)
+        bg.fill.solid()
+        bg.fill.fore_color.rgb = COLOR_DEMO_BG
+        bg.line.fill.background()
+        strip = slide.shapes.add_shape(1, 0, 0, Inches(0.16), SLIDE_H)
+        strip.fill.solid()
+        strip.fill.fore_color.rgb = COLOR_DEMO_LINE
+        strip.line.fill.background()
+        _, btf = add_textbox(slide, SLIDE_W - Inches(3.4), Inches(0.12),
+                             Inches(3.1), Inches(0.42))
+        bp = btf.paragraphs[0]
+        bp.alignment = PP_ALIGN.RIGHT
+        br = bp.add_run()
+        br.text = "🎬 สลับไปหน้าจอสาธิตสด"
+        style_run(br, size=Pt(14), bold=True, color=COLOR_DEMO_TITLE)
+
     top = MARGIN
     if s["title"]:
         # หัวข้อยาวให้ลดขนาดลงก่อน ถ้ายังยาวก็ขยายกล่องตามจำนวนบรรทัดจริง
@@ -333,7 +356,8 @@ def build_content(prs, s, index, md_dir, missing_images, overflow_slides):
         p.alignment = PP_ALIGN.LEFT
         r = p.add_run()
         r.text = s["title"]
-        style_run(r, size=t_size, bold=True, color=COLOR_ACCENT)
+        style_run(r, size=t_size, bold=True,
+                  color=COLOR_DEMO_TITLE if is_demo else COLOR_ACCENT)
         top = Inches(0.55) + title_h + Inches(0.18)
 
     bullets = [i for i in s["items"] if i["type"] == "bullet"]

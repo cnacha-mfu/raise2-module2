@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FixIt — ระบบแจ้งซ่อมออนไลน์ (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+<div class="proto-banner">🧪 นี่คือ prototype — ยังไม่มีฐานข้อมูล ลองกรอกอะไรแล้วกดรีเฟรชดู ข้อมูลจะหายทั้งหมด · ใน Module 2 เราจะทำให้มัน 'จำได้'</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">🎬 FixIt</a>
+  <nav>
+    <a href="index.html" class="active">หน้าแรก</a>
+    <a href="tickets.html">รายการใบแจ้งซ่อม</a>
+    <a href="new-ticket.html">แจ้งซ่อมใหม่</a>
+    <a href="categories.html">หมวดหมู่</a>
+    <a href="dashboard.html">แดชบอร์ด</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>🎬 FixIt — ระบบแจ้งซ่อมออนไลน์</h1>
+    <p>รวมทุกเรื่องแจ้งซ่อมไว้ที่เดียว — พนักงานแจ้งของเสียผ่านหน้าเว็บ ผู้ดูแลมอบหมายช่าง ช่างอัปเดตความคืบหน้า แล้วปิดงานเมื่อเสร็จ</p>
+  </section>
+
+  <section class="menu-grid">
+    <a class="menu-card" href="tickets.html">
+      <div class="icon">📋</div>
+      <h3>รายการใบแจ้งซ่อม</h3>
+      <p>ดูใบแจ้งซ่อมทั้งหมด พร้อมป้ายสถานะ กดแถวเพื่อเปิดรายละเอียด</p>
+    </a>
+    <a class="menu-card" href="new-ticket.html">
+      <div class="icon">📝</div>
+      <h3>แจ้งซ่อมใหม่</h3>
+      <p>กรอกฟอร์มแจ้งของเสีย ระบบสร้างใบแจ้งซ่อมสถานะ "แจ้งใหม่" ให้</p>
+    </a>
+    <a class="menu-card" href="ticket-detail.html?id=t001">
+      <div class="icon">🔍</div>
+      <h3>รายละเอียด + ความคืบหน้า</h3>
+      <p>เปิดดูใบหนึ่งใบแบบเต็ม เปลี่ยนสถานะ และเขียนความคืบหน้า (ตัวอย่าง: ใบ t001)</p>
+    </a>
+    <a class="menu-card" href="categories.html">
+      <div class="icon">🗂️</div>
+      <h3>จัดการหมวดหมู่</h3>
+      <p>เพิ่ม แก้ ลบ หมวดหมู่ปัญหา เช่น ไฟฟ้า ประปา เครื่องปรับอากาศ</p>
+    </a>
+    <a class="menu-card" href="dashboard.html">
+      <div class="icon">📊</div>
+      <h3>แดชบอร์ดสรุป</h3>
+      <p>ตัวเลขนับใบแจ้งซ่อมตามสถานะ และ 5 รายการล่าสุด</p>
+    </a>
+  </section>
+
+  <section class="card" style="margin-top:1.25rem">
+    <h2>prototype นี้คืออะไร</h2>
+    <p>นี่คือหน้าเว็บตัวอย่างของระบบ FixIt ที่ผู้สอนใช้สาธิตในคาบบรรยาย — กดดูได้ทุกหน้า กรอกฟอร์มได้จริง แต่ข้อมูลทั้งหมดอยู่ในหน่วยความจำของเบราว์เซอร์เท่านั้น รีเฟรชเมื่อไรข้อมูลกลับเป็นชุดเดิม ใน Module 2 เราจะต่อระบบนี้เข้ากับฐานข้อมูลจริง (Firestore) เพื่อให้มัน "จำได้"</p>
+  </section>
+</main>
+
+<footer class="site-footer">FixIt prototype · ADT-RAISE Batch 2 · Module 2 · ข้อมูลทุกชื่อเป็นชื่อสมมติ</footer>
+
+</body>
+</html>

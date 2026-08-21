@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LeaveEasy — จัดการประเภทการลา</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="leave-types">
+
+<div class="proto-banner">🧪 นี่คือ prototype — ยังไม่มีฐานข้อมูล ลองกรอกอะไรแล้วกดรีเฟรชดู ข้อมูลจะหายทั้งหมด · ใน Module 2 เราจะทำให้มัน 'จำได้'</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">🔧 LeaveEasy</a>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="leave-requests.html">รายการใบลา</a>
+    <a href="new-leave-request.html">ยื่นใบลาใหม่</a>
+    <a href="leave-types.html" class="active">ประเภทการลา</a>
+    <a href="dashboard.html">แดชบอร์ด</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div>
+      <h1>🗂️ จัดการประเภทการลา</h1>
+      <p class="page-sub">งานของฝ่ายบุคคล — เพิ่ม แก้ ลบ ประเภทการลาให้ตรงกับระเบียบที่บริษัทใช้จริง</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>เพิ่มประเภทการลาใหม่</h2>
+    <div class="form-error" id="leave-type-error"></div>
+    <form id="leave-type-form" novalidate>
+      <div class="form-group">
+        <label for="leave-type-name">ชื่อประเภทการลา</label>
+        <input type="text" id="leave-type-name" placeholder="เช่น ลาคลอด">
+      </div>
+      <button type="submit" class="btn">+ เพิ่มประเภทการลา</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>ประเภทการลาที่มีอยู่</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ชื่อประเภทการลา</th>
+            <th>ถูกใช้ในใบลา</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="leave-type-rows"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">LeaveEasy prototype · ADT-RAISE Batch 2 · Module 2 · ข้อมูลทุกชื่อเป็นชื่อสมมติ</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
