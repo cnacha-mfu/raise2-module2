@@ -29,9 +29,12 @@
 | Git ใช้ได้ | พิมพ์ `git --version` · ต้องเห็นเลขเวอร์ชัน |
 | บัญชี Firebase | เข้า console.firebase.google.com ด้วยบัญชี Google ที่ใช้ในคอร์ส |
 
-📦 **ต้นแบบ LeaveEasy** — โหลดจาก `https://github.com/cnacha-mfu/leaveeasy` (แท็ก `week6-start`)
-หรือเปิดดูหน้าตาก่อนที่ `https://cnacha-mfu.github.io/raise2-module2/materials/shared/prototypes/leaveeasy/`
-⚠️ **ใช้ดูเทียบเท่านั้น ห้าม fork มาส่งเป็นงานของตัวเอง**
+📦 **โค้ดเริ่มต้น LeaveEasy** — `https://github.com/cnacha-mfu/leaveeasy` แท็ก **`week6-start`**
+👀 อยากเห็นหน้าตาก่อน เปิดที่ `https://cnacha-mfu.github.io/raise2-module2/materials/shared/prototypes/leaveeasy/`
+
+> ✅ **clone มาได้เลย นี่คือจุดเริ่มต้นของใบงาน** — ขั้น A1 จะพาทำ
+> ⚠️ แต่ **ให้เริ่มประวัติ git ใหม่เป็นของคุณเอง** เพราะเกณฑ์ผ่านคือ **commit ในชื่อคุณ**
+> 🚫 **อย่าเปิดแท็บ `week7-end` `week8-end` `week9-end` ก่อนลงมือ** — นั่นคือคำตอบของสัปดาห์ถัดไป เปิดตอนติดจริงเท่านั้น
 
 ---
 
@@ -48,13 +51,20 @@
 
 ## ส่วน A — LeaveEasy เข้า repo ของคุณ ⏱ ~35 นาที
 
-### A1 — โหลดต้นแบบเข้าเครื่อง (10 นาที)
+### A1 — clone โค้ดเริ่มต้นเข้าเครื่อง (10 นาที)
 
-สร้างโฟลเดอร์ชื่อ `leaveeasy` ในเครื่องคุณ แล้วคัดลอกไฟล์ต้นแบบเข้าไป
+เปิด Claude Code ในโฟลเดอร์ที่คุณอยากเก็บงาน แล้วสั่ง
 
-**จะเห็น:** ในโฟลเดอร์มี `index.html` · `leave-requests.html` · `new-leave-request.html` · `leave-request-detail.html` · โฟลเดอร์ `css/` และ `js/`
+```prompt
+ช่วยโหลดโค้ดเริ่มต้นจาก https://github.com/cnacha-mfu/leaveeasy แท็ก week6-start
+มาไว้ในโฟลเดอร์ชื่อ leaveeasy แล้วลบประวัติ git ของเจ้าของเดิมออก
+บอกผมทีละขั้นว่าทำอะไรบ้าง
+```
 
-> 🆘 โหลดไฟล์ไม่ได้ → เปิดลิงก์ต้นแบบบนเว็บแล้วบอก TA ในคิวถามกลาง จะมีไฟล์ zip สำรองให้
+**จะเห็น:** โฟลเดอร์ `leaveeasy` มี `index.html` · `leave-requests.html` · `new-leave-request.html` · `leave-request-detail.html` · โฟลเดอร์ `css/` และ `js/` · และ **ยังไม่มีประวัติ git** (ขั้น A3 จะเริ่มใหม่เป็นของคุณ)
+
+> 🆘 `git: command not found` → ยังไม่ได้ติดตั้ง Git ให้โพสต์คิวถามกลางทันที
+> 🆘 clone ไม่ผ่าน → เข้า repo บนเว็บ กดปุ่มเขียว **Code → Download ZIP** แล้วแตกไฟล์ลงโฟลเดอร์ `leaveeasy` แทนได้
 
 ### A2 — เปิด Claude Code ในโฟลเดอร์นี้ แล้วให้มันรันเว็บให้ดู (10 นาที)
 

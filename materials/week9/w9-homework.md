@@ -88,7 +88,8 @@
 
 1. เปิด **ใบงานที่ 4** ([`w9-lab-leaveeasy.md`](w9-lab-leaveeasy.html)) ดูขั้นเดียวกันที่ทำกับ LeaveEasy
 2. ขาดข้อไหนให้ย้อนกลับไปใบงานสัปดาห์ที่ตรงกัน — ① [ใบงาน 1](../week6/w6-lab-leaveeasy.html)/[2](../week7/w7-lab-leaveeasy.html) · ② [ใบงาน 3](../week8/w8-lab-leaveeasy.html) · ③ [ใบงาน 2](../week7/w7-lab-leaveeasy.html)
-3. repo ตัวอย่าง `https://github.com/cnacha-mfu/leaveeasy` แท็ก `week9-end` — ⚠️ **ดูเทียบเท่านั้น ห้าม fork มาส่ง**
+3. เปิด repo `https://github.com/cnacha-mfu/leaveeasy` แท็ก `week9-end` **ดูวิธีที่ LeaveEasy ทำ** แล้วแปลมาใช้กับหัวข้อของคุณ
+   🚫 **แต่ห้ามส่ง LeaveEasy เป็นการบ้าน** — การบ้านต้องเป็นหัวข้อของคุณเอง
 4. 💬 **นัด Consult ปิด Module — อาทิตย์ 20 ก.ย. หรืออังคาร 22 ก.ย. 09:00–12:00** จองผ่านลิงก์ที่ผู้สอนวางในแชท
 
 > 🎉 **จบ Module 2 แล้ว** — ระบบของคุณเก็บข้อมูลได้ รู้จักผู้ใช้ ปิดข้อมูลเป็น มีผู้ช่วย AI และพิสูจน์ตัวเองด้วยชุดทดสอบ
