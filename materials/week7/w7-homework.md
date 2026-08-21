@@ -83,7 +83,7 @@ Deploy เว็บ **พร้อมกับกฎ** ในรอบเดี�
 
 ## 🆘 ติดแล้วทำอย่างไร
 
-1. เปิด **ใบงานที่ 2** ([`w7-lab-leaveeasy.md`](w7-lab-leaveeasy.md)) ดูขั้นเดียวกันที่ทำกับ LeaveEasy
+1. เปิด **ใบงานที่ 2** ([`w7-lab-leaveeasy.md`](w7-lab-leaveeasy.html)) ดูขั้นเดียวกันที่ทำกับ LeaveEasy
 2. ดู repo ตัวอย่าง `https://github.com/cnacha-mfu/leaveeasy` แท็ก `week7-end` — ⚠️ **ดูเทียบเท่านั้น ห้าม fork มาส่ง**
 3. โพสต์ **คิวถามกลาง** พร้อมข้อความ error เต็ม ๆ
 4. ยังไม่ผ่าน → **นัด Consult อาทิตย์ 6 ก.ย. หรืออังคาร 8 ก.ย. 09:00–12:00**
