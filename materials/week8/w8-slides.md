@@ -444,7 +444,7 @@ firebase deploy --only firestore:rules
 |---|---|---|
 | `tickets` | `leaveRequests` | **?** |
 | `comments` (โฟลเดอร์ย่อย) | `approvals` (โฟลเดอร์ย่อย) | **?** |
-| reporter / technician / admin | employee / manager | **?** |
+| reporter / technician / admin | employee / manager / hr | **?** |
 > note: ฉายค้าง 1 นาที — "เช้านี้ผมทำกับ FixIt · บ่ายนี้ทุกคนทำ LeaveEasy พร้อมกัน · แล้วช่องขวาสุดคือการบ้าน หัวข้อของตัวเอง" · แถวสอง ย้ำเรื่องโฟลเดอร์ย่อย — "กฎข้อ 5 ของคุณ คือโฟลเดอร์ในช่องนี้"
 
 # 🔗 ตารางเทียบ (ต่อ) — ฝั่งผู้ช่วย AI
