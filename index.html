@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<base target="_blank">
 <title>ADT-RAISE Batch 2 · Module 2 — MVP-Ready</title>
 <meta name="description" content="สื่อการสอน Module 2 (สัปดาห์ที่ 6–9) · ADT-RAISE Non-Degree Batch 2">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
@@ -44,10 +45,11 @@
   .sechead span{color:var(--muted);font-size:.8rem}
   .sechead::after{content:"";flex:1;border-top:1px solid var(--hairline)}
 
-  .weeks{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem}
+  .weeks{display:flex;flex-direction:column;gap:.75rem}
   .card{background:var(--panel);border:1px solid var(--hairline);border-radius:.8rem;
-    padding:1.25rem 1.25rem 1rem;display:flex;flex-direction:column;gap:.55rem;
-    transition:border-color .15s, transform .15s}
+    padding:1rem 1.25rem;display:grid;align-items:center;gap:.7rem 1.4rem;
+    grid-template-columns:minmax(12rem,1fr) minmax(9rem,.8fr) max-content;
+    transition:border-color .15s}
   .card:hover{border-color:var(--accent)}
   .whead{display:flex;align-items:center;gap:.7rem}
   .wno{width:2.5rem;height:2.5rem;border-radius:.6rem;background:var(--panel2);
@@ -60,7 +62,21 @@
   .card .deliver{font-size:.8rem;color:var(--muted);border-left:3px solid var(--hairline);
     padding-left:.7rem}
   .card .deliver b{color:var(--text);font-weight:600}
-  .actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:auto;padding-top:.5rem}
+
+  .slots{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
+  .slot{background:var(--panel2);border:1px solid var(--hairline);border-radius:.6rem;
+    padding:.5rem .7rem .55rem;display:flex;flex-direction:column;gap:.35rem;min-width:10.5rem}
+  .slot.lab{border-color:rgba(232,164,60,.5)}
+  .slot.hw{border-color:rgba(91,190,126,.5)}
+  .slotlab{font-size:.68rem;color:var(--muted);line-height:1.35}
+  .slotlab b{color:var(--text);font-weight:600}
+  .slot .btns{display:flex;flex-wrap:wrap;gap:.35rem}
+  .due{font-size:.68rem;font-weight:600;color:var(--accent)}
+  .slot.hw .due{color:var(--green)}
+  @media (max-width:64rem){
+    .card{grid-template-columns:1fr}
+    .slots{justify-content:flex-start}
+  }
   .btn{display:inline-flex;align-items:center;gap:.35rem;border-radius:.5rem;
     padding:.38rem .8rem;font-size:.8rem;font-weight:600;border:1px solid var(--hairline);
     background:var(--panel2);transition:background .15s,color .15s,border-color .15s}
@@ -116,60 +132,115 @@
   </div>
 </section>
 
-<div class="sechead"><h3>📅 รายสัปดาห์</h3><span>สไลด์เปิดดูบนเว็บได้ทันที · 🔧 ใบงานส่งวันจันทร์ · 🏠 การบ้านส่งวันศุกร์ · ส่งเป็น URL ของ repo บน GitHub</span></div>
+<div class="sechead"><h3>📅 รายสัปดาห์</h3><span>แต่ละสัปดาห์แยกเป็น 3 ช่อง — 📖 บรรยายเช้า · 🔧 <b>ใบงานทำในคาบแลปบ่าย</b> · 🏠 การบ้านทำเองระหว่างสัปดาห์</span></div>
 
 <div class="weeks">
   <div class="card">
     <div class="whead"><div class="wno"><small>สัปดาห์</small><b>6</b></div>
       <div><h4>🗄️ Setup + Firestore</h4><div class="date">เสาร์ 29 ส.ค. · ระบบเริ่มมีความจำ</div></div></div>
     <div class="deliver">📦 ส่งมอบ: <b>Repo + หน้าเว็บครบ + Firestore มีข้อมูลจริง</b></div>
-    <div class="actions">
-      <a class="btn primary" href="materials/week6/w6-slides.html">▶ สไลด์</a>
-      <a class="btn" href="materials/week6/w6-slides.pptx">⬇ .pptx</a>
-      <a class="btn" href="materials/week6/w6-lab-leaveeasy.html">🔧 ใบงาน · ส่ง จ. 31 ส.ค.</a>
-      <a class="btn" href="materials/week6/w6-homework.html">🏠 การบ้าน · ส่ง ศ. 4 ก.ย.</a>
-      <a class="btn" href="materials/shared/supplements/llm-basics.html">🎞️ AI ทำงานยังไง (เวอร์ชันแอนิเมชัน · เนื้อหาอยู่ในสไลด์หลักแล้ว)</a>
-      <a class="btn" href="materials/shared/prototypes/fixit/index.html">🧪 ต้นแบบ FixIt</a>
-      <a class="btn" href="materials/shared/prototypes/leaveeasy/index.html">🧪 ต้นแบบ LeaveEasy</a>
+    <div class="slots">
+      <div class="slot">
+        <span class="slotlab">📖 <b>เช้า 09:00–12:00</b><br>บรรยาย + สาธิต</span>
+        <div class="btns">
+          <a class="btn primary" href="materials/week6/w6-slides.html">▶ สไลด์</a>
+          <a class="btn" href="materials/week6/w6-slides.pptx">⬇ .pptx</a>
+        </div>
+      </div>
+      <div class="slot lab">
+        <span class="slotlab">🔧 <b>บ่าย 13:00–16:00</b><br>ทำในคาบ · LeaveEasy</span>
+        <div class="btns"><a class="btn" href="materials/week6/w6-lab-leaveeasy.html">ใบงานที่ 1</a></div>
+        <span class="due">ส่ง URL repo ภายใน จ. 31 ส.ค.</span>
+      </div>
+      <div class="slot hw">
+        <span class="slotlab">🏠 <b>ระหว่างสัปดาห์</b><br>ทำเอง · หัวข้อของคุณ</span>
+        <div class="btns"><a class="btn" href="materials/week6/w6-homework.html">การบ้านที่ 1</a></div>
+        <span class="due">ส่ง URL repo ภายใน ศ. 4 ก.ย.</span>
+      </div>
     </div>
   </div>
   <div class="card">
     <div class="whead"><div class="wno"><small>สัปดาห์</small><b>7</b></div>
       <div><h4>⭐ CRUD + ล็อกอิน + ขึ้นออนไลน์</h4><div class="date">เสาร์ 5 ก.ย. · ระบบรู้จักผู้ใช้และออกสู่โลก</div></div></div>
     <div class="deliver">📦 ส่งมอบ: <b>CLAUDE.md + GitHub + CRUD + URL ออนไลน์</b></div>
-    <div class="actions">
-      <a class="btn primary" href="materials/week7/w7-slides.html">▶ สไลด์</a>
-      <a class="btn" href="materials/week7/w7-slides.pptx">⬇ .pptx</a>
-      <a class="btn" href="materials/week7/w7-lab-leaveeasy.html">🔧 ใบงาน · ส่ง จ. 7 ก.ย.</a>
-      <a class="btn" href="materials/week7/w7-homework.html">🏠 การบ้าน · ส่ง ศ. 11 ก.ย.</a>
+    <div class="slots">
+      <div class="slot">
+        <span class="slotlab">📖 <b>เช้า 09:00–12:00</b><br>บรรยาย + สาธิต</span>
+        <div class="btns">
+          <a class="btn primary" href="materials/week7/w7-slides.html">▶ สไลด์</a>
+          <a class="btn" href="materials/week7/w7-slides.pptx">⬇ .pptx</a>
+        </div>
+      </div>
+      <div class="slot lab">
+        <span class="slotlab">🔧 <b>บ่าย 13:00–16:00</b><br>ทำในคาบ · LeaveEasy</span>
+        <div class="btns"><a class="btn" href="materials/week7/w7-lab-leaveeasy.html">ใบงานที่ 2</a></div>
+        <span class="due">ส่ง URL repo ภายใน จ. 7 ก.ย.</span>
+      </div>
+      <div class="slot hw">
+        <span class="slotlab">🏠 <b>ระหว่างสัปดาห์</b><br>ทำเอง · หัวข้อของคุณ</span>
+        <div class="btns"><a class="btn" href="materials/week7/w7-homework.html">การบ้านที่ 2</a></div>
+        <span class="due">ส่ง URL repo ภายใน ศ. 11 ก.ย.</span>
+      </div>
     </div>
   </div>
   <div class="card">
     <div class="whead"><div class="wno"><small>สัปดาห์</small><b>8</b></div>
       <div><h4>🤖 Agentic AI + ปิดข้อมูล + Reviewer</h4><div class="date">เสาร์ 12 ก.ย. · ระบบมียามเฝ้าและมีผู้ช่วย</div></div></div>
     <div class="deliver">📦 ส่งมอบ: <b>ระบบออนไลน์ปลอดภัย + ผู้ช่วย AI + Reviewer</b></div>
-    <div class="actions">
-      <a class="btn primary" href="materials/week8/w8-slides.html">▶ สไลด์</a>
-      <a class="btn" href="materials/week8/w8-slides.pptx">⬇ .pptx</a>
-      <a class="btn" href="materials/week8/w8-lab-leaveeasy.html">🔧 ใบงาน · ส่ง จ. 14 ก.ย.</a>
-      <a class="btn" href="materials/week8/w8-homework.html">🏠 การบ้าน · ส่ง ศ. 18 ก.ย.</a>
+    <div class="slots">
+      <div class="slot">
+        <span class="slotlab">📖 <b>เช้า 09:00–12:00</b><br>บรรยาย + สาธิต</span>
+        <div class="btns">
+          <a class="btn primary" href="materials/week8/w8-slides.html">▶ สไลด์</a>
+          <a class="btn" href="materials/week8/w8-slides.pptx">⬇ .pptx</a>
+        </div>
+      </div>
+      <div class="slot lab">
+        <span class="slotlab">🔧 <b>บ่าย 13:00–16:00</b><br>ทำในคาบ · LeaveEasy</span>
+        <div class="btns"><a class="btn" href="materials/week8/w8-lab-leaveeasy.html">ใบงานที่ 3</a></div>
+        <span class="due">ส่ง URL repo ภายใน จ. 14 ก.ย.</span>
+      </div>
+      <div class="slot hw">
+        <span class="slotlab">🏠 <b>ระหว่างสัปดาห์</b><br>ทำเอง · หัวข้อของคุณ</span>
+        <div class="btns"><a class="btn" href="materials/week8/w8-homework.html">การบ้านที่ 3</a></div>
+        <span class="due">ส่ง URL repo ภายใน ศ. 18 ก.ย.</span>
+      </div>
     </div>
   </div>
   <div class="card">
     <div class="whead"><div class="wno"><small>สัปดาห์</small><b>9</b></div>
       <div><h4>🧪 Tester + ปิด Module</h4><div class="date">เสาร์ 19 ก.ย. · ระบบพิสูจน์ตัวเองได้</div></div></div>
     <div class="deliver">📦 ส่งมอบ: <b>ชุดทดสอบผ่าน + คลิปสาธิต 3 นาที + MVP</b></div>
-    <div class="actions">
-      <a class="btn primary" href="materials/week9/w9-slides.html">▶ สไลด์</a>
-      <a class="btn" href="materials/week9/w9-slides.pptx">⬇ .pptx</a>
-      <a class="btn" href="materials/week9/w9-lab-leaveeasy.html">🔧 ใบงาน · ส่ง จ. 21 ก.ย.</a>
-      <a class="btn" href="materials/week9/w9-homework.html">🏠 การบ้าน · ส่ง อ. 22 ก.ย.</a>
+    <div class="slots">
+      <div class="slot">
+        <span class="slotlab">📖 <b>เช้า 09:00–12:00</b><br>บรรยาย + สาธิต</span>
+        <div class="btns">
+          <a class="btn primary" href="materials/week9/w9-slides.html">▶ สไลด์</a>
+          <a class="btn" href="materials/week9/w9-slides.pptx">⬇ .pptx</a>
+        </div>
+      </div>
+      <div class="slot lab">
+        <span class="slotlab">🔧 <b>บ่าย 13:00–16:00</b><br>ทำในคาบ · LeaveEasy</span>
+        <div class="btns"><a class="btn" href="materials/week9/w9-lab-leaveeasy.html">ใบงานที่ 4</a></div>
+        <span class="due">ส่ง URL repo ภายใน จ. 21 ก.ย.</span>
+      </div>
+      <div class="slot hw">
+        <span class="slotlab">🏠 <b>ระหว่างสัปดาห์</b><br>ทำเอง · หัวข้อของคุณ</span>
+        <div class="btns"><a class="btn" href="materials/week9/w9-homework.html">การบ้านที่ 4</a></div>
+        <span class="due">ส่ง URL repo ภายใน อ. 22 ก.ย.</span>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="format">
-  <h4>🖥️ รูปแบบการเรียน — ไม่มีงานกลุ่ม ทุกคนทำระบบของตัวเอง</h4>
+  <h4>🔧 ใบงาน กับ 🏠 การบ้าน — คนละอย่างกัน อย่าสลับ</h4>
+  <p><b>🔧 ใบงาน = ทำในคาบแลปบ่ายวันเสาร์ 13:00–16:00 พร้อมกันทั้งห้อง</b> ทำกับ <b>LeaveEasy</b> ระบบเดียวกันหมด
+     มีผู้สอนกับ TA อยู่ในห้อง ติดตรงไหนถามได้ทันที — <b>ไม่ใช่การบ้าน ไม่ต้องเอากลับไปทำ</b> ที่บ้านทำต่อได้เฉพาะส่วนที่ยังไม่ทัน<br>
+     <b>🏠 การบ้าน = ทำเองระหว่างสัปดาห์</b> กับ <b>หัวข้อของตัวเองจาก Hackathon</b> โดยทำซ้ำขั้นตอนเดียวกับที่เพิ่งทำในคาบ —
+     <b>นี่คือของส่งมอบที่ใช้ประเมิน</b></p>
+
+  <h4 style="margin-top:.8rem">🖥️ รูปแบบการเรียน — ไม่มีงานกลุ่ม ทุกคนทำระบบของตัวเอง</h4>
   <p><b>🔧 คาบบ่ายวันเสาร์ ทุกคนทำ LeaveEasy เหมือนกันทีละขั้น</b> บนเครื่องของตัวเอง —
      เพราะเป็นระบบเดียวกัน ติดตรงไหนช่วยกันได้ทันที · แต่ละห้องย่อยตกลงกันว่า<b>รอบนี้ใครนำจอ</b>
      คนนำจอแชร์หน้าจอแล้วเล่าไปทำไป และ<b>สลับคนนำจอทุก Checkpoint</b> ·
