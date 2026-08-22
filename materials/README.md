@@ -21,7 +21,7 @@ Raise2/
 │   │   ├── specs/          Spec ของ FixIt (สาธิต) และ LeaveEasy (ใบงาน)
 │   │   ├── recovery/       ชุดกู้สถานะรายสัปดาห์ (เป็นชุด prompt ไม่ใช่โค้ด)
 │   │   ├── templates/      .gitignore · CLAUDE.md · ตัวอย่าง Rules · ตั้งค่า Playwright MCP
-│   │   └── supplements/    สไลด์เสริม HTML มีแอนิเมชัน (llm-basics)
+│   │   └── supplements/    llm-basics — เนื้อหารวมเข้าสไลด์หลักสัปดาห์ที่ 6 แล้ว · ไฟล์นี้คือเวอร์ชันแอนิเมชัน (ไม่บังคับใช้)
 │   └── week6/ … week9/     สัปดาห์ละ 4 ชิ้น (ดูตาราง)
 │
 └── scripts/
