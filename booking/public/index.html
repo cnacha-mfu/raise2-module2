@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>จองคิว Consult · ADT-RAISE Module 2</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="topin">
+    <div class="mark">💬</div>
+    <div>
+      <h1>จองคิว Consult</h1>
+      <p>ADT-RAISE Batch 2 · Module 2</p>
+    </div>
+    <div class="right" id="authArea"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ยังไม่ล็อกอิน -->
+  <div id="signedOut" class="center hidden">
+    <h2 style="font-size:1.4rem">เข้าสู่ระบบก่อนจองคิว</h2>
+    <p class="note">ใช้บัญชี Google ของมหาวิทยาลัย (@mfu.ac.th หรือ @lamduan.mfu.ac.th)</p>
+    <button class="btn primary" id="btnSignIn">เข้าสู่ระบบด้วย Google</button>
+    <div id="signInErr" class="err hidden" style="max-width:28rem;margin-left:auto;margin-right:auto"></div>
+  </div>
+
+  <!-- ล็อกอินแล้วแต่โดเมนไม่ผ่าน -->
+  <div id="notAllowed" class="center hidden">
+    <h2 style="font-size:1.2rem">บัญชีนี้ยังจองไม่ได้</h2>
+    <p class="note" id="notAllowedMsg"></p>
+    <button class="btn" id="btnSwitch">เปลี่ยนบัญชี</button>
+  </div>
+
+  <!-- หน้าหลัก -->
+  <main id="main" class="hidden">
+    <section class="hero">
+      <h2>เลือกช่วงเวลาที่ว่าง แล้วกดจอง</h2>
+      <p>ช่องละ <b id="slotLen">30</b> นาที · จองได้ <b id="quotaTxt">1</b> ช่องต่อสัปดาห์ · ยกเลิกเองได้ตลอดก่อนถึงเวลา</p>
+    </section>
+
+    <div id="myBookings"></div>
+    <div id="msg"></div>
+    <div id="weeks"></div>
+
+    <div class="legend">
+      <span><i class="dot"></i> ว่าง กดจองได้</span>
+      <span><i class="dot mine"></i> คิวของคุณ</span>
+      <span><i class="dot taken"></i> มีคนจองแล้ว / ผู้สอนปิดไว้</span>
+    </div>
+
+    <div class="box">
+      <h3>ℹ️ ข้อควรรู้</h3>
+      <p>
+        • จองแล้วชื่อของคุณจะไม่แสดงให้ผู้เรียนคนอื่นเห็น — เห็นแค่ว่าช่องนั้นเต็มแล้ว<br>
+        • ถ้าไปไม่ได้ <b>กรุณากดยกเลิก</b> เพื่อคืนช่องให้เพื่อน<br>
+        • ช่องที่เวลาผ่านไปแล้วจะจองไม่ได้<br>
+        • Consult เป็นการนัดคุยรายคน ผู้สอนจะขอให้คุณเปิดหน้าจอและอธิบายงานของตัวเอง
+      </p>
+    </div>
+  </main>
+</div>
+
+<!-- หน้าต่างยืนยันการจอง -->
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <h3>ยืนยันการจอง</h3>
+    <div class="when" id="modalWhen"></div>
+    <label for="topic">เรื่องที่อยากปรึกษา <span style="color:var(--muted)">(บอกสั้น ๆ พอให้ผู้สอนเตรียมตัวได้)</span></label>
+    <textarea id="topic" maxlength="400" placeholder="เช่น ต่อ Firestore แล้วหน้ารายการไม่ขึ้นข้อมูล ลองแล้วตามใบงานส่วน D แต่ยังติด"></textarea>
+    <div id="modalErr" class="err hidden"></div>
+    <div class="row">
+      <button class="btn" id="modalCancel">ยกเลิก</button>
+      <button class="btn primary" id="modalOk">ยืนยันจอง</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  watchAuth, signIn, signOutNow, mayUse, isAdmin, domainAllowed,
+  db, collection, onSnapshot, query, where,
+  bookSlot, cancelSlot, allSlots, slotsOfDay, isPast, thaiDate, humanError,
+  CONSULT_DAYS, WEEK_TITLES, SLOT_MINUTES, QUOTA_PER_WEEK, ALLOWED_DOMAINS,
+} from "./common.js";
+
+const $ = (id) => document.getElementById(id);
+let user = null;
+let taken = new Map();      // slotId -> { byUid }
+let myAppts = new Map();    // slotId -> appointment
+let unsubSlots = null, unsubMine = null;
+let pending = null;
+
+$("slotLen").textContent = SLOT_MINUTES;
+$("quotaTxt").textContent = QUOTA_PER_WEEK;
+
+/* ── ล็อกอิน ─────────────────────────────────────────────── */
+
+$("btnSignIn").onclick = async () => {
+  $("signInErr").classList.add("hidden");
+  try { await signIn(); }
+  catch (e) { $("signInErr").textContent = humanError(e); $("signInErr").classList.remove("hidden"); }
+};
+$("btnSwitch").onclick = () => signOutNow();
+
+watchAuth((u) => {
+  user = u;
+  unsubSlots?.(); unsubMine?.();
+  unsubSlots = unsubMine = null;
+  taken = new Map(); myAppts = new Map();
+  render();
+  if (user && mayUse(user)) listen();
+});
+
+function render() {
+  const area = $("authArea");
+  if (!user) {
+    area.innerHTML = "";
+    $("signedOut").classList.remove("hidden");
+    $("notAllowed").classList.add("hidden");
+    $("main").classList.add("hidden");
+    return;
+  }
+  area.innerHTML = `<div class="who"><b>${esc(user.displayName || "")}</b>${esc(user.email || "")}</div>`;
+  const out = document.createElement("button");
+  out.className = "btn sm"; out.textContent = "ออกจากระบบ"; out.onclick = () => signOutNow();
+  area.appendChild(out);
+  if (isAdmin(user)) {
+    const a = document.createElement("a");
+    a.className = "btn sm"; a.href = "admin.html"; a.textContent = "หน้าผู้สอน";
+    area.insertBefore(a, out);
+  }
+
+  $("signedOut").classList.add("hidden");
+  if (!mayUse(user)) {
+    $("notAllowedMsg").textContent =
+      `บัญชี ${user.email} ไม่ได้อยู่ในโดเมนที่เปิดให้จอง (${ALLOWED_DOMAINS.join(" หรือ ")}) `
+      + "— ออกจากระบบแล้วเข้าใหม่ด้วยอีเมลของมหาวิทยาลัย ถ้ายังไม่ได้ให้แจ้งผู้สอน";
+    $("notAllowed").classList.remove("hidden");
+    $("main").classList.add("hidden");
+    return;
+  }
+  $("notAllowed").classList.add("hidden");
+  $("main").classList.remove("hidden");
+  paint();
+}
+
+/* ── ฟังข้อมูลสด ─────────────────────────────────────────── */
+
+function listen() {
+  unsubSlots = onSnapshot(collection(db, "slots"), (snap) => {
+    taken = new Map();
+    snap.forEach((d) => taken.set(d.id, d.data()));
+    paint();
+  }, (e) => showMsg(humanError(e), true));
+
+  unsubMine = onSnapshot(
+    query(collection(db, "appointments"), where("uid", "==", user.uid)),
+    (snap) => {
+      myAppts = new Map();
+      snap.forEach((d) => myAppts.set(d.id, d.data()));
+      paint();
+    },
+    (e) => showMsg(humanError(e), true),
+  );
+}
+
+/* ── วาดหน้าจอ ───────────────────────────────────────────── */
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function paint() {
+  if (!user || !mayUse(user)) return;
+  paintMine();
+  paintWeeks();
+}
+
+function paintMine() {
+  const box = $("myBookings");
+  const mine = [...myAppts.entries()]
+    .map(([id, a]) => ({ id, ...a }))
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  if (!mine.length) {
+    box.innerHTML = `<div class="box"><h3>📅 คุณยังไม่มีคิว</h3>
+      <p>เลือกช่องเวลาที่ว่างด้านล่าง แล้วกดจองได้เลย</p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="box good"><h3>📅 คิวของคุณ</h3></div>`;
+  const wrap = box.firstElementChild;
+  mine.forEach((a) => {
+    const past = isPast({ date: a.date, time: a.time });
+    const row = document.createElement("p");
+    row.style.marginTop = ".5rem";
+    row.innerHTML = `<b>${esc(thaiDate(a.date))} · ${esc(a.time)} น.</b>
+      ${past ? '<span style="color:var(--muted)"> (ผ่านไปแล้ว)</span>' : ""}
+      <br><span style="color:var(--muted)">เรื่อง: ${esc(a.topic || "—")}</span> `;
+    if (!past) {
+      const btn = document.createElement("button");
+      btn.className = "btn danger sm"; btn.textContent = "ยกเลิกคิวนี้";
+      btn.onclick = () => doCancel(a);
+      row.appendChild(document.createElement("br"));
+      row.appendChild(btn);
+    }
+    wrap.appendChild(row);
+  });
+}
+
+function paintWeeks() {
+  const weeks = [...new Set(CONSULT_DAYS.map((d) => d.week))].sort();
+  const host = $("weeks");
+  host.innerHTML = "";
+  weeks.forEach((w) => {
+    const bookedThisWeek = [...myAppts.values()].filter((a) => a.week === w).length;
+    const full = bookedThisWeek >= QUOTA_PER_WEEK;
+
+    const sec = document.createElement("section");
+    sec.className = "week" + (full ? " done" : "");
+    sec.innerHTML = `<div class="whead">
+        <div class="wno"><small>สัปดาห์</small><b>${w}</b></div>
+        <div><h3>${esc(WEEK_TITLES[w] || "")}</h3>
+          <div class="sub">Consult ของสัปดาห์นี้</div></div>
+        <span class="wtag ${full ? "done" : ""}">${full ? "✅ จองแล้ว" : `ว่าง ${QUOTA_PER_WEEK - bookedThisWeek} ช่อง`}</span>
+      </div>`;
+
+    CONSULT_DAYS.filter((d) => d.week === w).forEach((day) => {
+      const dayEl = document.createElement("div");
+      dayEl.className = "day";
+      dayEl.innerHTML = `<div class="dayname">${esc(thaiDate(day.date))} · ${day.start}–${day.end} น.</div>`;
+      const row = document.createElement("div");
+      row.className = "slots";
+
+      slotsOfDay(day).forEach((slot) => {
+        const b = document.createElement("button");
+        b.className = "slot";
+        b.textContent = slot.time;
+        const t = taken.get(slot.id);
+        const isMine = myAppts.has(slot.id);
+        if (isMine) {
+          b.classList.add("mine"); b.disabled = true; b.title = "คิวของคุณ";
+          b.textContent = slot.time + " ✓";
+        } else if (isPast(slot)) {
+          b.classList.add("past"); b.disabled = true; b.title = "เวลาผ่านไปแล้ว";
+        } else if (t) {
+          b.classList.add("taken"); b.disabled = true; b.title = "มีคนจองแล้ว";
+        } else if (full) {
+          b.classList.add("taken"); b.disabled = true;
+          b.title = `สัปดาห์นี้คุณจองครบ ${QUOTA_PER_WEEK} ช่องแล้ว`;
+        } else {
+          b.classList.add("free");
+          b.onclick = () => openModal(slot);
+        }
+        row.appendChild(b);
+      });
+      dayEl.appendChild(row);
+      sec.appendChild(dayEl);
+    });
+    host.appendChild(sec);
+  });
+}
+
+function showMsg(text, isError) {
+  const el = $("msg");
+  el.innerHTML = "";
+  if (!text) return;
+  const d = document.createElement("div");
+  d.className = isError ? "err" : "ok";
+  d.textContent = text;
+  el.appendChild(d);
+  if (!isError) setTimeout(() => { if (el.contains(d)) el.innerHTML = ""; }, 6000);
+}
+
+/* ── จอง / ยกเลิก ────────────────────────────────────────── */
+
+function openModal(slot) {
+  pending = slot;
+  $("modalWhen").textContent = `${thaiDate(slot.date)} · ${slot.time}–${slot.endTime} น.`;
+  $("topic").value = "";
+  $("modalErr").classList.add("hidden");
+  $("modal").classList.remove("hidden");
+  $("topic").focus();
+}
+function closeModal() { $("modal").classList.add("hidden"); pending = null; }
+
+$("modalCancel").onclick = closeModal;
+$("modal").onclick = (e) => { if (e.target === $("modal")) closeModal(); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+$("modalOk").onclick = async () => {
+  if (!pending) return;
+  const topic = $("topic").value.trim();
+  if (topic.length < 5) {
+    $("modalErr").textContent = "ช่วยเขียนเรื่องที่อยากปรึกษาสั้น ๆ อย่างน้อย 5 ตัวอักษร";
+    $("modalErr").classList.remove("hidden");
+    return;
+  }
+  $("modalOk").disabled = true; $("modalOk").textContent = "กำลังจอง…";
+  try {
+    await bookSlot(user, pending, topic);
+    const when = `${thaiDate(pending.date)} · ${pending.time} น.`;
+    closeModal();
+    showMsg(`จองสำเร็จ — ${when} · ผู้สอนเห็นคิวของคุณแล้ว`, false);
+  } catch (e) {
+    $("modalErr").textContent = humanError(e);
+    $("modalErr").classList.remove("hidden");
+  } finally {
+    $("modalOk").disabled = false; $("modalOk").textContent = "ยืนยันจอง";
+  }
+};
+
+async function doCancel(a) {
+  if (!confirm(`ยกเลิกคิว ${thaiDate(a.date)} เวลา ${a.time} น. ใช่ไหม?`)) return;
+  try {
+    await cancelSlot(a.id, user.uid, a.week);
+    showMsg("ยกเลิกคิวแล้ว ช่องนี้กลับไปว่างให้คนอื่นจองได้", false);
+  } catch (e) { showMsg(humanError(e), true); }
+}
+</script>
+</body>
+</html>

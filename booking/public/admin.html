@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รายการนัด Consult · ผู้สอน</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="topin">
+    <div class="mark">📋</div>
+    <div>
+      <h1>รายการนัด Consult</h1>
+      <p>หน้าสำหรับผู้สอน</p>
+    </div>
+    <div class="right" id="authArea"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div id="signedOut" class="center hidden">
+    <h2 style="font-size:1.3rem">เข้าสู่ระบบด้วยบัญชีผู้สอน</h2>
+    <button class="btn primary" id="btnSignIn">เข้าสู่ระบบด้วย Google</button>
+    <div id="signInErr" class="err hidden" style="max-width:28rem;margin-left:auto;margin-right:auto"></div>
+  </div>
+
+  <div id="notAdmin" class="center hidden">
+    <h2 style="font-size:1.2rem">บัญชีนี้ไม่ใช่ผู้สอน</h2>
+    <p class="note" id="notAdminMsg"></p>
+    <button class="btn" id="btnSwitch">เปลี่ยนบัญชี</button>
+    <p class="note">อยากจองคิว → <a href="index.html">ไปหน้าจองคิว</a></p>
+  </div>
+
+  <main id="main" class="hidden">
+    <section class="hero">
+      <h2>คิวทั้งหมดที่มีคนจอง</h2>
+      <p>อัปเดตสดทันทีที่มีคนจองหรือยกเลิก</p>
+    </section>
+
+    <div class="stats" id="stats"></div>
+    <div id="msg"></div>
+
+    <div class="toolbar">
+      <select id="fWeek"><option value="">ทุกสัปดาห์</option></select>
+      <select id="fDate"><option value="">ทุกวัน</option></select>
+      <label style="font-size:.82rem;color:var(--muted);display:inline-flex;align-items:center;gap:.35rem">
+        <input type="checkbox" id="fUpcoming" checked> เฉพาะที่ยังไม่ถึงเวลา
+      </label>
+      <button class="btn sm" id="btnCsv">⬇ ดาวน์โหลด CSV</button>
+      <a class="btn sm" href="index.html">หน้าจองคิว</a>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>วันที่</th><th>เวลา</th><th>สัปดาห์</th><th>ชื่อ</th><th>อีเมล</th>
+          <th>เรื่องที่อยากปรึกษา</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div id="emptyMsg" class="empty hidden">ยังไม่มีใครจองในเงื่อนไขนี้</div>
+    </div>
+
+    <div class="box accent">
+      <h3>🚫 ปิดช่วงเวลาไม่ให้ใครจอง</h3>
+      <p>ใช้ตอนติดประชุมหรือไม่ว่าง — ช่องที่ปิดจะแสดงเป็นเต็มในหน้าของผู้เรียน และยกเลิกได้ทีหลัง</p>
+      <div class="toolbar">
+        <select id="blockDate"></select>
+        <select id="blockTime"></select>
+        <button class="btn" id="btnBlock">ปิดช่องนี้</button>
+      </div>
+      <div id="blockMsg"></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import {
+  watchAuth, signIn, signOutNow, isAdmin,
+  db, collection, onSnapshot,
+  cancelSlot, blockSlot, slotsOfDay, isPast, thaiDate, humanError, dayConfig,
+  CONSULT_DAYS, ADMIN_EMAILS,
+} from "./common.js";
+
+const $ = (id) => document.getElementById(id);
+let user = null, appts = [], unsub = null;
+
+$("btnSignIn").onclick = async () => {
+  $("signInErr").classList.add("hidden");
+  try { await signIn(); }
+  catch (e) { $("signInErr").textContent = humanError(e); $("signInErr").classList.remove("hidden"); }
+};
+$("btnSwitch").onclick = () => signOutNow();
+
+watchAuth((u) => {
+  user = u;
+  unsub?.(); unsub = null; appts = [];
+  render();
+  if (user && isAdmin(user)) listen();
+});
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function render() {
+  const area = $("authArea");
+  area.innerHTML = "";
+  if (!user) {
+    $("signedOut").classList.remove("hidden");
+    $("notAdmin").classList.add("hidden");
+    $("main").classList.add("hidden");
+    return;
+  }
+  area.innerHTML = `<div class="who"><b>${esc(user.displayName || "")}</b>${esc(user.email || "")}</div>`;
+  const out = document.createElement("button");
+  out.className = "btn sm"; out.textContent = "ออกจากระบบ"; out.onclick = () => signOutNow();
+  area.appendChild(out);
+
+  $("signedOut").classList.add("hidden");
+  if (!isAdmin(user)) {
+    $("notAdminMsg").textContent =
+      `บัญชี ${user.email} ไม่ได้อยู่ในรายชื่อผู้สอน (${ADMIN_EMAILS.join(" · ")}) `
+      + "— แก้รายชื่อได้ที่ booking/public/config.js และ booking/firestore.rules แล้ว deploy ใหม่";
+    $("notAdmin").classList.remove("hidden");
+    $("main").classList.add("hidden");
+    return;
+  }
+  $("notAdmin").classList.add("hidden");
+  $("main").classList.remove("hidden");
+  buildFilters();
+  paint();
+}
+
+function listen() {
+  unsub = onSnapshot(collection(db, "appointments"), (snap) => {
+    appts = [];
+    snap.forEach((d) => appts.push({ id: d.id, ...d.data() }));
+    appts.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+    paint();
+  }, (e) => {
+    const el = $("msg");
+    el.innerHTML = `<div class="err">${esc(humanError(e))}</div>`;
+  });
+}
+
+/* ── ตัวกรอง ─────────────────────────────────────────────── */
+
+function buildFilters() {
+  const weeks = [...new Set(CONSULT_DAYS.map((d) => d.week))].sort();
+  $("fWeek").innerHTML = '<option value="">ทุกสัปดาห์</option>'
+    + weeks.map((w) => `<option value="${w}">สัปดาห์ที่ ${w}</option>`).join("");
+  $("fDate").innerHTML = '<option value="">ทุกวัน</option>'
+    + CONSULT_DAYS.map((d) => `<option value="${d.date}">${esc(thaiDate(d.date))}</option>`).join("");
+  $("blockDate").innerHTML = CONSULT_DAYS.map((d) => `<option value="${d.date}">${esc(thaiDate(d.date))}</option>`).join("");
+  fillBlockTimes();
+  $("blockDate").onchange = fillBlockTimes;
+  ["fWeek", "fDate"].forEach((id) => { $(id).onchange = paint; });
+  $("fUpcoming").onchange = paint;
+}
+
+function fillBlockTimes() {
+  const day = dayConfig($("blockDate").value);
+  $("blockTime").innerHTML = day
+    ? slotsOfDay(day).map((s) => `<option value="${s.time}">${s.time} น.</option>`).join("")
+    : "";
+}
+
+function filtered() {
+  const w = $("fWeek").value, d = $("fDate").value, up = $("fUpcoming").checked;
+  return appts.filter((a) =>
+    (!w || String(a.week) === w)
+    && (!d || a.date === d)
+    && (!up || !isPast(a)));
+}
+
+/* ── วาดตาราง ────────────────────────────────────────────── */
+
+function paint() {
+  const list = filtered();
+  const tbody = $("rows");
+  tbody.innerHTML = "";
+  $("emptyMsg").classList.toggle("hidden", list.length > 0);
+
+  list.forEach((a) => {
+    const tr = document.createElement("tr");
+    if (a.blocked) tr.className = "blocked";
+    tr.innerHTML = `
+      <td class="nowrap">${esc(thaiDate(a.date))}</td>
+      <td class="nowrap">${esc(a.time)} น.</td>
+      <td class="nowrap">${esc(a.week)}</td>
+      <td>${esc(a.name || "—")}</td>
+      <td class="nowrap">${esc(a.email || "—")}</td>
+      <td>${esc(a.topic || "—")}</td>`;
+    const td = document.createElement("td");
+    td.className = "nowrap";
+    const btn = document.createElement("button");
+    btn.className = "btn danger sm";
+    btn.textContent = a.blocked ? "เปิดคืน" : "ยกเลิก";
+    btn.onclick = () => remove(a);
+    td.appendChild(btn);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+
+  const upcoming = appts.filter((a) => !isPast(a) && !a.blocked).length;
+  const real = appts.filter((a) => !a.blocked);
+  const people = new Set(real.map((a) => a.uid)).size;
+  const byWeek = [...new Set(CONSULT_DAYS.map((d) => d.week))].sort()
+    .map((w) => `<div class="stat"><b>${real.filter((a) => a.week === w).length}</b><span>สัปดาห์ที่ ${w}</span></div>`).join("");
+  $("stats").innerHTML =
+    `<div class="stat"><b>${real.length}</b><span>คิวทั้งหมด</span></div>`
+    + `<div class="stat"><b>${upcoming}</b><span>ยังไม่ถึงเวลา</span></div>`
+    + `<div class="stat"><b>${people}</b><span>ผู้เรียนที่จองแล้ว</span></div>`
+    + byWeek;
+}
+
+async function remove(a) {
+  const what = a.blocked
+    ? `เปิดช่อง ${thaiDate(a.date)} ${a.time} น. คืนให้จองได้`
+    : `ยกเลิกคิวของ ${a.name || a.email} วันที่ ${thaiDate(a.date)} ${a.time} น.`;
+  if (!confirm(what + " ใช่ไหม?")) return;
+  try {
+    await cancelSlot(a.id, a.uid, a.week);
+    $("msg").innerHTML = `<div class="ok">${esc(a.blocked ? "เปิดช่องคืนแล้ว" : "ยกเลิกคิวแล้ว — แจ้งผู้เรียนด้วยว่าคิวถูกยกเลิก")}</div>`;
+  } catch (e) {
+    $("msg").innerHTML = `<div class="err">${esc(humanError(e))}</div>`;
+  }
+}
+
+/* ── ปิดช่วงเวลา ─────────────────────────────────────────── */
+
+$("btnBlock").onclick = async () => {
+  const day = dayConfig($("blockDate").value);
+  const time = $("blockTime").value;
+  if (!day || !time) return;
+  const slot = slotsOfDay(day).find((s) => s.time === time);
+  try {
+    await blockSlot(user, slot);
+    $("blockMsg").innerHTML = `<div class="ok">ปิดช่อง ${esc(thaiDate(slot.date))} ${esc(time)} น. แล้ว</div>`;
+  } catch (e) {
+    $("blockMsg").innerHTML = `<div class="err">${esc(humanError(e))} (ช่องนี้อาจมีคนจองไปแล้ว)</div>`;
+  }
+};
+
+/* ── CSV ─────────────────────────────────────────────────── */
+
+$("btnCsv").onclick = () => {
+  const rows = [["วันที่", "เวลา", "สัปดาห์", "ชื่อ", "อีเมล", "เรื่องที่อยากปรึกษา"]];
+  filtered().forEach((a) => rows.push([thaiDate(a.date), a.time, a.week, a.name || "", a.email || "", a.topic || ""]));
+  const csv = "﻿" + rows
+    .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+    .join("\r\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = "consult-appointments.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>

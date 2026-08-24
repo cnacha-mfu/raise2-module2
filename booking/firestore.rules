@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// ============================================================================
+//  กฎความปลอดภัยของระบบจองคิว Consult
+//  ⚠️ รายชื่อผู้สอนกับโดเมนในไฟล์นี้ ต้องตรงกับ booking/public/config.js เสมอ
+//     แก้ที่เดียวไม่พอ ต้องแก้ทั้งสองไฟล์แล้ว deploy ใหม่
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn()  { return request.auth != null; }
+    function me()        { return request.auth.uid; }
+    function mail()      { return request.auth.token.email.lower(); }
+    function verified()  { return request.auth.token.email_verified == true; }
+
+    // ── รายชื่อผู้สอน — ต้องตรงกับ ADMIN_EMAILS ใน config.js ──────────────
+    function isAdmin() {
+      return signedIn() && verified() && mail() in [
+        'cnacha@mfu.ac.th',
+        'mfu.claude.project@gmail.com'
+      ];
+    }
+
+    // ── โดเมนที่จองได้ — ต้องตรงกับ ALLOWED_DOMAINS ใน config.js ──────────
+    function domainOk() {
+      return mail().matches('.*@(mfu[.]ac[.]th|lamduan[.]mfu[.]ac[.]th)');
+    }
+
+    function member() { return signedIn() && verified() && (isAdmin() || domainOk()); }
+
+    function slotIdOk(id) { return id.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}'); }
+
+    // ── slots — ใครจองช่องไหนไปแล้วบ้าง ───────────────────────────────────
+    //    ผู้เรียนอ่านได้ทั้งหมด แต่เห็นแค่ uid ไม่เห็นชื่อหรืออีเมลของเพื่อน
+    //    ชื่อเอกสารคือรหัสช่อง จึงกันการจองซ้ำได้เองโดยไม่ต้องล็อกอะไรเพิ่ม
+    match /slots/{slotId} {
+      allow read: if member();
+      allow create: if member()
+        && slotIdOk(slotId)
+        && request.resource.data.byUid == me()
+        && request.resource.data.keys().hasOnly(['date', 'time', 'week', 'byUid', 'createdAt'])
+        && request.resource.data.date is string
+        && request.resource.data.time is string
+        && request.resource.data.week is number;
+      allow update: if false;
+      allow delete: if isAdmin() || (member() && resource.data.byUid == me());
+    }
+
+    // ── appointments — รายละเอียดคิว (ชื่อ อีเมล เรื่องที่ปรึกษา) ─────────
+    //    ผู้เรียนอ่านได้เฉพาะของตัวเอง · ผู้สอนอ่านได้ทั้งหมด
+    match /appointments/{slotId} {
+      allow read: if isAdmin() || (member() && resource.data.uid == me());
+      allow create: if member()
+        && slotIdOk(slotId)
+        && request.resource.data.uid == me()
+        && request.resource.data.email == mail()
+        && request.resource.data.topic is string
+        && request.resource.data.topic.size() > 0
+        && request.resource.data.topic.size() <= 400
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 120;
+      allow update: if false;
+      allow delete: if isAdmin() || (member() && resource.data.uid == me());
+    }
+
+    // ── quota — กันจองเกินโควตาของแต่ละสัปดาห์ ────────────────────────────
+    //    ชื่อเอกสารคือ {uid}_w{สัปดาห์} จึงสร้างซ้ำในสัปดาห์เดียวกันไม่ได้
+    match /quota/{quotaId} {
+      allow read: if isAdmin() || (member() && resource.data.uid == me());
+      allow create: if member()
+        && request.resource.data.uid == me()
+        && request.resource.data.weekStr is string
+        && quotaId == me() + '_w' + request.resource.data.weekStr
+        && request.resource.data.slotId is string
+        && slotIdOk(request.resource.data.slotId);
+      allow update: if false;
+      allow delete: if isAdmin() || (member() && resource.data.uid == me());
+    }
+
+    // ── ห้องอื่นที่ไม่ได้ระบุ ปิดทั้งหมด ──────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
