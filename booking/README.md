@@ -10,19 +10,41 @@
 
 ---
 
-## ⚠️ ต้องทำก่อนใช้งานครั้งแรก — 2 คลิกในหน้า Console
+## 🔴 ต้องทำก่อนใช้งานครั้งแรก — 2 อย่างในหน้า Console
 
-ตอนนี้ระบบ deploy ขึ้นแล้ว **แต่ยังล็อกอินไม่ได้** เพราะโปรเจกต์ยังไม่ได้เปิดบริการ Authentication
-เป็นขั้นตอนที่สั่งผ่านคำสั่งไม่ได้ ต้องกดในหน้าเว็บ
+ตอนนี้หน้าเว็บ deploy ขึ้นแล้ว **แต่ยังใช้งานไม่ได้** เพราะโปรเจกต์ยังไม่มีฐานข้อมูลและยังไม่ได้เปิดการล็อกอิน
+ทั้งสองอย่างสั่งผ่านคำสั่งไม่ได้ ต้องกดในหน้าเว็บ · **ทำตามลำดับนี้**
+
+### 1️⃣ สร้างฐานข้อมูล Firestore
+
+1. เปิด https://console.firebase.google.com/project/raise2-58508/firestore
+2. กด **Create database**
+3. เลือกที่ตั้ง **`asia-southeast1` (Singapore)** — ใกล้ไทยที่สุด
+4. เลือก **Start in production mode** (กฎจริงของเราจะทับให้ในขั้นถัดไป)
+5. กด **Create** แล้วรอจนหน้าฐานข้อมูลว่าง ๆ ขึ้นมา
+
+**แล้วกลับมาที่ terminal สั่งอัปโหลดกฎของเราทับ** — สำคัญ เพราะหน้า Console ใส่กฎเริ่มต้นของมันเองไว้
+
+```bash
+cd booking
+firebase deploy --only firestore:rules --project raise2-58508
+```
+
+**จะเห็น:** `rules file firestore.rules compiled successfully` แล้วตามด้วย `Deploy complete!`
+
+### 2️⃣ เปิดการล็อกอินด้วย Google
 
 1. เปิด https://console.firebase.google.com/project/raise2-58508/authentication/providers
-2. กด **Get started** (ถ้ายังไม่เคยเปิด)
-3. ในรายการผู้ให้บริการ เลือก **Google** → สลับ **Enable** เป็นเปิด
+2. กด **Get started**
+3. เลือก **Google** → สลับ **Enable** เป็นเปิด
 4. ช่อง **Project support email** เลือกอีเมลของคุณ → **Save**
 
 **จะเห็น:** Google ขึ้นสถานะ `Enabled` ในตาราง Sign-in providers
 
-เสร็จแล้วเปิด https://raise2-58508.web.app แล้วกดเข้าสู่ระบบได้เลย
+### ✅ ทดสอบว่าใช้ได้จริง
+
+เปิด https://raise2-58508.web.app → เข้าสู่ระบบด้วย `nacha.cho@mfu.ac.th` → กดจอง 1 ช่อง →
+เปิด https://raise2-58508.web.app/admin แล้วต้องเห็นคิวที่เพิ่งจองอยู่ในตาราง → กดยกเลิกทิ้งได้
 
 ---
 
@@ -36,7 +58,8 @@
 
 ### ตอนนี้ตั้งไว้ว่า
 
-- **ผู้สอน:** `cnacha@mfu.ac.th` และ `mfu.claude.project@gmail.com`
+- **ผู้สอน:** `nacha.cho@mfu.ac.th` และ `mfu.claude.project@gmail.com` (สำรอง ลบได้)
+- **ผู้สอนจองคิวเองได้** ที่หน้าผู้เรียน ใช้ทดสอบระบบได้ — ติดโควตาเหมือนกัน และยกเลิกทิ้งจากหน้า admin ได้
 - **โดเมนที่จองได้:** `@mfu.ac.th` · `@lamduan.mfu.ac.th`
 - **โควตา:** 1 ช่องต่อคนต่อสัปดาห์
 - **วันที่เปิด:** อาทิตย์และอังคาร 09:00–12:00 ทั้ง 8 วัน ตามตาราง Consult ใน `plan.md`
@@ -109,6 +132,7 @@ firebase deploy --project raise2-58508
 
 | อาการ | สาเหตุที่พบบ่อย |
 |---|---|
+| จองแล้วขึ้น `Cloud Firestore API has not been used` | ยังไม่ได้สร้างฐานข้อมูล → ทำขั้นที่ 1️⃣ ด้านบน แล้วอย่าลืม deploy กฎทับ |
 | กดเข้าสู่ระบบแล้วขึ้น `operation-not-allowed` | ยังไม่ได้เปิด Google ในหน้า Authentication → ทำตามหัวข้อ **ต้องทำก่อนใช้งานครั้งแรก** ด้านบน |
 | เข้าได้แต่ขึ้นว่า "บัญชีนี้ยังจองไม่ได้" | อีเมลไม่ได้อยู่ในโดเมนที่อนุญาต → แก้ `ALLOWED_DOMAINS` ใน `config.js` **และ** `domainOk()` ใน `firestore.rules` |
 | หน้าผู้สอนขึ้นว่า "บัญชีนี้ไม่ใช่ผู้สอน" | อีเมลไม่ตรงกับ `ADMIN_EMAILS` → แก้ทั้ง `config.js` และ `isAdmin()` ใน `firestore.rules` |

@@ -46,6 +46,12 @@
       <p>ช่องละ <b id="slotLen">30</b> นาที · จองได้ <b id="quotaTxt">1</b> ช่องต่อสัปดาห์ · ยกเลิกเองได้ตลอดก่อนถึงเวลา</p>
     </section>
 
+    <div id="adminHint" class="box accent hidden">
+      <h3>🧑‍🏫 คุณกำลังใช้บัญชีผู้สอน</h3>
+      <p>หน้านี้ใช้ <b>จองจริงเพื่อทดสอบ</b> ได้เลย — ติดโควตาเหมือนผู้เรียนทุกอย่าง
+         คิวที่จองจะขึ้นในหน้าผู้สอน ยกเลิกทิ้งได้จากที่นั่นหรือจากปุ่มด้านล่างนี้ ·
+         <a href="admin.html">ไปหน้ารายการนัดทั้งหมด</a></p>
+    </div>
     <div id="myBookings"></div>
     <div id="msg"></div>
     <div id="weeks"></div>
@@ -149,6 +155,7 @@ function render() {
   }
   $("notAllowed").classList.add("hidden");
   $("main").classList.remove("hidden");
+  $("adminHint").classList.toggle("hidden", !isAdmin(user));
   paint();
 }
 

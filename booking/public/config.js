@@ -6,9 +6,12 @@
 // ── 1. อีเมลผู้สอน (เห็นรายการจองทั้งหมด · ยกเลิกคิวคนอื่นได้ · ปิดช่วงเวลาได้) ──
 //    ⚠️ แก้ที่นี่แล้ว "ต้องแก้ใน booking/firestore.rules ให้ตรงกันด้วย" มิฉะนั้นหน้า admin จะเปิดไม่ได้
 export const ADMIN_EMAILS = [
-  "cnacha@mfu.ac.th",            // ⚠️ ตรวจว่าสะกดตรงกับอีเมลจริงของคุณ ถ้าไม่ตรงหน้า admin จะเปิดไม่ได้
-  "mfu.claude.project@gmail.com", // บัญชีสำรอง — เผื่อบรรทัดบนสะกดไม่ตรง จะได้ยังเข้าหน้า admin ได้
-];
+  "nacha.cho@mfu.ac.th",
+  "mfu.claude.project@gmail.com", // บัญชีสำรองกันล็อกตัวเองออก — ลบบรรทัดนี้ได้ถ้าไม่ต้องการ
+];                                // (ลบแล้วต้องลบใน firestore.rules ด้วย)
+
+// 📌 ผู้สอน "จองคิวเองได้เหมือนผู้เรียน" ที่หน้า index.html — ใช้ทดสอบระบบได้เลย
+//    โดยติดโควตาข้อ 3 เหมือนกัน และคิวที่จองจะโผล่ในหน้า admin ให้ยกเลิกทิ้งได้
 
 // ── 2. โดเมนอีเมลที่จองได้ ──
 export const ALLOWED_DOMAINS = ["mfu.ac.th", "lamduan.mfu.ac.th"];
@@ -41,13 +44,14 @@ export const WEEK_TITLES = {
   9: "Tester + ปิด Module",
 };
 
-// ── 7. ค่าเชื่อมต่อ Firebase — ไม่ใช่ความลับ ห้ามพยายามซ่อน ──
-//    สิ่งที่ป้องกันข้อมูลจริงคือ Security Rules ใน booking/firestore.rules
-export const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDeYAgKTPMiT1gaWK4sRQhVHa3MfTXFvpM",
-  authDomain: "raise2-58508.firebaseapp.com",
-  projectId: "raise2-58508",
-  storageBucket: "raise2-58508.firebasestorage.app",
-  messagingSenderId: "889930133815",
-  appId: "1:889930133815:web:af0b14c742edada32f6ab2",
-};
+// ── 7. ค่าเชื่อมต่อ Firebase ──
+//    ไม่ได้เขียนไว้ในไฟล์นี้ — `common.js` อ่านจาก /__/firebase/init.json
+//    ซึ่ง Firebase Hosting เสิร์ฟให้เองอัตโนมัติสำหรับโปรเจกต์ที่ deploy อยู่
+//
+//    ทำไมไม่เขียนไว้ตรงนี้: ค่าเหล่านี้ "ไม่ใช่ความลับ" (ทุกคนที่เปิดเว็บก็เห็นได้อยู่ดี
+//    สิ่งที่ป้องกันข้อมูลจริงคือ firestore.rules) แต่ตัวสแกนของ GitHub เห็นรูปแบบ
+//    `AIza...` แล้วแจ้งเตือนว่าเป็นคีย์หลุดทุกครั้ง — อ่านจาก Hosting แทนจึงไม่ต้องเถียงกับสแกนเนอร์
+//
+//    ⚠️ ผลข้างเคียง: เปิดไฟล์ตรง ๆ หรือใช้เซิร์ฟเวอร์ทั่วไปจะใช้ไม่ได้
+//    ทดสอบในเครื่องให้ใช้  cd booking && firebase serve --project raise2-58508
+export const FIREBASE_CONFIG_URL = "/__/firebase/init.json";

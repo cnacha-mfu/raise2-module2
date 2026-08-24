@@ -17,7 +17,7 @@ service cloud.firestore {
     // ── รายชื่อผู้สอน — ต้องตรงกับ ADMIN_EMAILS ใน config.js ──────────────
     function isAdmin() {
       return signedIn() && verified() && mail() in [
-        'cnacha@mfu.ac.th',
+        'nacha.cho@mfu.ac.th',
         'mfu.claude.project@gmail.com'
       ];
     }

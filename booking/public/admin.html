@@ -120,6 +120,9 @@ function render() {
     return;
   }
   area.innerHTML = `<div class="who"><b>${esc(user.displayName || "")}</b>${esc(user.email || "")}</div>`;
+  const book = document.createElement("a");
+  book.className = "btn sm"; book.href = "index.html"; book.textContent = "หน้าจองคิว";
+  area.appendChild(book);
   const out = document.createElement("button");
   out.className = "btn sm"; out.textContent = "ออกจากระบบ"; out.onclick = () => signOutNow();
   area.appendChild(out);

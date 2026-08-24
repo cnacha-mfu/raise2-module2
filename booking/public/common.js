@@ -8,7 +8,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
-  FIREBASE_CONFIG, ADMIN_EMAILS, ALLOWED_DOMAINS, CONSULT_DAYS,
+  FIREBASE_CONFIG_URL, ADMIN_EMAILS, ALLOWED_DOMAINS, CONSULT_DAYS,
   SLOT_MINUTES, QUOTA_PER_WEEK, WEEK_TITLES,
 } from "./config.js";
 
@@ -18,7 +18,27 @@ export {
   ADMIN_EMAILS, ALLOWED_DOMAINS, CONSULT_DAYS, SLOT_MINUTES, QUOTA_PER_WEEK, WEEK_TITLES,
 };
 
-const app = initializeApp(FIREBASE_CONFIG);
+// ค่าเชื่อมต่อมาจาก Firebase Hosting โดยตรง (ดูเหตุผลใน config.js ข้อ 7)
+// ต้องรันผ่าน Firebase Hosting หรือ `firebase serve` เท่านั้น
+let firebaseConfig;
+try {
+  const res = await fetch(FIREBASE_CONFIG_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  firebaseConfig = await res.json();
+} catch (e) {
+  document.body.innerHTML =
+    '<div style="max-width:34rem;margin:4rem auto;padding:1.25rem;font-family:sans-serif;'
+    + 'background:#1B2452;color:#EEF0F8;border-radius:.8rem;line-height:1.7">'
+    + "<h2>เปิดหน้านี้ด้วยวิธีนี้ไม่ได้</h2>"
+    + "<p>หน้าเว็บอ่านค่าเชื่อมต่อ Firebase จาก <code>/__/firebase/init.json</code> "
+    + "ซึ่งมีเฉพาะตอนเสิร์ฟผ่าน Firebase Hosting</p>"
+    + '<p>ใช้งานจริงที่ <a style="color:#E8A43C" href="https://raise2-58508.web.app">raise2-58508.web.app</a> '
+    + "หรือทดสอบในเครื่องด้วย <code>cd booking &amp;&amp; firebase serve --project raise2-58508</code></p>"
+    + "</div>";
+  throw e;
+}
+
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
