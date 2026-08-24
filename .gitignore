@@ -8,3 +8,6 @@ open-router-apikey.xlsx
 *apikey*
 *api-key*
 *.key
+
+# Firebase CLI build cache
+booking/.firebase/
