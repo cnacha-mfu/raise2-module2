@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, collection, doc, onSnapshot, writeBatch, serverTimestamp,
-  query, where, getDocs, deleteDoc,
+  query, where, getDocs, getDocsFromServer, deleteDoc, limit,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
@@ -41,6 +41,34 @@ try {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+/* ── กันค้างเงียบ ──────────────────────────────────────────────────────────
+   Firestore จะไม่โยน error เมื่อต่อฐานข้อมูลไม่ได้ — มันเก็บคำสั่งเขียนไว้ในเครื่อง
+   แล้วรอจนกว่าจะติด ทำให้หน้าจอค้างที่ "กำลังจอง" ตลอด · จึงต้องจับเวลาเอง       */
+
+const TIMEOUT_MS = 15000;
+
+export function withTimeout(promise, ms = TIMEOUT_MS) {
+  let timer;
+  const bell = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const e = new Error("timeout");
+      e.code = "app/timeout";
+      reject(e);
+    }, ms);
+  });
+  return Promise.race([promise, bell]).finally(() => clearTimeout(timer));
+}
+
+/** อ่านจากเซิร์ฟเวอร์จริง 1 ครั้งเพื่อดูว่าฐานข้อมูลใช้งานได้ไหม */
+export async function backendReachable() {
+  try {
+    await withTimeout(getDocsFromServer(query(collection(db, "slots"), limit(1))), 10000);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e };
+  }
+}
 
 /* ── ล็อกอิน ───────────────────────────────────────────────────────────── */
 
@@ -134,14 +162,14 @@ export async function bookSlot(user, slot, topic) {
   });
   batch.set(doc(db, "appointments", slot.id), {
     date: slot.date, time: slot.time, week: slot.week,
-    uid: user.uid, name: user.displayName || "", email: user.email || "",
+    uid: user.uid, name: user.displayName || "", email: (user.email || "").toLowerCase(),
     topic: topic, createdAt: serverTimestamp(),
   });
   batch.set(doc(db, "quota", quotaId(user.uid, slot.week)), {
     uid: user.uid, week: slot.week, weekStr: String(slot.week),
     slotId: slot.id, createdAt: serverTimestamp(),
   });
-  await batch.commit();
+  await withTimeout(batch.commit());
 }
 
 /** ยกเลิกคิว — ลบทั้ง 3 เอกสารพร้อมกัน */
@@ -150,7 +178,7 @@ export async function cancelSlot(slotIdStr, ownerUid, week) {
   batch.delete(doc(db, "slots", slotIdStr));
   batch.delete(doc(db, "appointments", slotIdStr));
   batch.delete(doc(db, "quota", quotaId(ownerUid, week)));
-  await batch.commit();
+  await withTimeout(batch.commit());
 }
 
 /** ผู้สอนปิดช่วงเวลาไม่ให้ใครจอง */
@@ -162,10 +190,10 @@ export async function blockSlot(user, slot) {
   });
   batch.set(doc(db, "appointments", slot.id), {
     date: slot.date, time: slot.time, week: slot.week,
-    uid: user.uid, name: "— ปิดโดยผู้สอน —", email: user.email || "",
+    uid: user.uid, name: "— ปิดโดยผู้สอน —", email: (user.email || "").toLowerCase(),
     topic: "ปิดช่วงเวลานี้", blocked: true, createdAt: serverTimestamp(),
   });
-  await batch.commit();
+  await withTimeout(batch.commit());
 }
 
 /* ── ตัวช่วยแสดงผล ─────────────────────────────────────────────────────── */
@@ -190,8 +218,12 @@ export function humanError(err) {
   if (code === "permission-denied") {
     return "ระบบไม่อนุญาต — ช่องนี้อาจถูกคนอื่นจองไปพอดี หรือคุณจองครบโควตาของสัปดาห์นี้แล้ว กดรีเฟรชแล้วลองใหม่";
   }
+  if (code === "app/timeout") {
+    return "ระบบไม่ตอบภายใน 15 วินาที — มักเกิดจากฐานข้อมูลของโปรเจกต์ยังไม่ถูกสร้าง "
+      + "หรืออินเทอร์เน็ตหลุด · คิวยังไม่ถูกบันทึก ให้แจ้งผู้สอนแล้วลองใหม่";
+  }
   if (code === "unavailable" || code === "failed-precondition") {
-    return "ต่ออินเทอร์เน็ตไม่ได้ในตอนนี้ ลองใหม่อีกครั้ง";
+    return "ต่อฐานข้อมูลไม่ได้ในตอนนี้ ลองใหม่อีกครั้ง ถ้ายังไม่ได้ให้แจ้งผู้สอน";
   }
   if (code === "auth/operation-not-allowed" || code === "auth/configuration-not-found") {
     return "ระบบยังไม่ได้เปิดการล็อกอินด้วย Google — แจ้งผู้สอนให้เปิดที่ Firebase Console → Authentication → Sign-in method → Google → Enable";

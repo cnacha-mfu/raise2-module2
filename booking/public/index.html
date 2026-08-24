@@ -46,6 +46,8 @@
       <p>ช่องละ <b id="slotLen">30</b> นาที · จองได้ <b id="quotaTxt">1</b> ช่องต่อสัปดาห์ · ยกเลิกเองได้ตลอดก่อนถึงเวลา</p>
     </section>
 
+    <div id="offline" class="err hidden"></div>
+
     <div id="adminHint" class="box accent hidden">
       <h3>🧑‍🏫 คุณกำลังใช้บัญชีผู้สอน</h3>
       <p>หน้านี้ใช้ <b>จองจริงเพื่อทดสอบ</b> ได้เลย — ติดโควตาเหมือนผู้เรียนทุกอย่าง
@@ -91,7 +93,7 @@
 
 <script type="module">
 import {
-  watchAuth, signIn, signOutNow, mayUse, isAdmin, domainAllowed,
+  watchAuth, signIn, signOutNow, mayUse, isAdmin, domainAllowed, backendReachable,
   db, collection, onSnapshot, query, where,
   bookSlot, cancelSlot, allSlots, slotsOfDay, isPast, thaiDate, humanError,
   CONSULT_DAYS, WEEK_TITLES, SLOT_MINUTES, QUOTA_PER_WEEK, ALLOWED_DOMAINS,
@@ -122,8 +124,26 @@ watchAuth((u) => {
   unsubSlots = unsubMine = null;
   taken = new Map(); myAppts = new Map();
   render();
-  if (user && mayUse(user)) listen();
+  if (user && mayUse(user)) { listen(); checkBackend(); }
 });
+
+/** ต่อฐานข้อมูลไม่ติด → เตือนทันที และปิดปุ่มจองทั้งหมด ไม่ปล่อยให้กดแล้วค้าง */
+let backendDown = false;
+async function checkBackend() {
+  const res = await backendReachable();
+  backendDown = !res.ok;
+  const el = $("offline");
+  el.classList.toggle("hidden", !backendDown);
+  if (backendDown) {
+    el.innerHTML = "<b>ยังต่อฐานข้อมูลไม่ได้ — ตอนนี้จองไม่ได้</b><br>"
+      + (isAdmin(user)
+        ? "ผู้สอน: ให้สร้างฐานข้อมูล Firestore ก่อนที่ Firebase Console → Firestore Database → Create database "
+          + "(เลือก asia-southeast1 · production mode) แล้วสั่ง <code>firebase deploy --only firestore:rules</code> "
+          + "จากโฟลเดอร์ booking อีกครั้ง"
+        : "ระบบยังไม่พร้อมใช้งาน กรุณาแจ้งผู้สอน แล้วลองใหม่ภายหลัง");
+  }
+  paint();
+}
 
 function render() {
   const area = $("authArea");
@@ -262,6 +282,9 @@ function paintWeeks() {
         } else if (full) {
           b.classList.add("taken"); b.disabled = true;
           b.title = `สัปดาห์นี้คุณจองครบ ${QUOTA_PER_WEEK} ช่องแล้ว`;
+        } else if (backendDown) {
+          b.classList.add("past"); b.disabled = true;
+          b.title = "ยังต่อฐานข้อมูลไม่ได้";
         } else {
           b.classList.add("free");
           b.onclick = () => openModal(slot);
