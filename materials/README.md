@@ -18,6 +18,7 @@ Raise2/
 ├── materials/
 │   ├── shared/
 │   │   ├── glossary.md     แผ่นศัพท์ภาษาคน — แจกผู้เรียนคาบแรก
+│   │   ├── homework-scope-guide.md  เลือกส่วนของโครงงาน Hackathon มาทำเป็นการบ้าน (อ่านก่อนการบ้านที่ 1)
 │   │   ├── specs/          Spec ของ FixIt (สาธิต) และ LeaveEasy (ใบงาน)
 │   │   ├── recovery/       ชุดกู้สถานะรายสัปดาห์ (เป็นชุด prompt ไม่ใช่โค้ด)
 │   │   ├── templates/      .gitignore · CLAUDE.md · ตัวอย่าง Rules · ตั้งค่า Playwright MCP
