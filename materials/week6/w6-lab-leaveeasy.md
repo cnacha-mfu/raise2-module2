@@ -28,10 +28,10 @@
 | บัญชี Firebase | เข้า console.firebase.google.com ด้วยบัญชี Google ที่ใช้ในคอร์ส |
 | **บัญชี GitHub เข้าได้** | ยังไม่มีให้สมัครฟรีตอนนี้เลย · ⭐ **เปิด github.com ล็อกอินค้างไว้ในเบราว์เซอร์ตั้งแต่ก่อนเข้าคาบ** จะทำให้ขั้น A2 เหลือกดปุ่มเดียว |
 
-📦 **repo ต้นแบบ** `https://github.com/cnacha-mfu/leaveeasy` · 👀 ดูหน้าตาก่อนได้ที่ `cnacha-mfu.github.io/raise2-module2/materials/shared/prototypes/leaveeasy/`
+📦 **repo ต้นแบบ** `https://github.com/cnacha-mfu/leaveeasy-start` · 👀 ดูหน้าตาก่อนได้ที่ `cnacha-mfu.github.io/raise2-module2/materials/shared/prototypes/leaveeasy/`
 
 > ✅ **ขั้น A1 จะให้คุณกด Fork** ก๊อปปี้ repo ต้นแบบมาไว้ในบัญชีคุณ · **ผู้สอนตรวจงานจาก repo นี้โดยตรง** ดังนั้นทำอะไรสำเร็จให้ commit แล้วส่งขึ้น GitHub ทุกครั้ง
-> 🚫 **อย่าเปิดแท็บ `week7-end` `week8-end` `week9-end` ก่อนลงมือ** — นั่นคือคำตอบของสัปดาห์ถัดไป เปิดตอนติดจริงเท่านั้น
+> 🚫 **เฉลยของแต่ละสัปดาห์อยู่คนละ repo** (`cnacha-mfu/leaveeasy` แท็ก `week6-end` ถึง `week9-end`) — เปิดตอนติดจริงเท่านั้น
 
 ---
 
@@ -50,16 +50,16 @@
 
 ### A1 — Fork repo ต้นแบบมาเป็นของคุณ แล้วโหลดลงเครื่อง (8 นาที)
 
-**ทำบนเว็บก่อน (2 นาที)** — เข้า `https://github.com/cnacha-mfu/leaveeasy` → กดปุ่ม **Fork** มุมขวาบน → เลือกบัญชีของคุณ → **Create fork**
+**ทำบนเว็บก่อน (2 นาที)** — เข้า `https://github.com/cnacha-mfu/leaveeasy-start` → กดปุ่ม **Fork** มุมขวาบน → เลือกบัญชีของคุณ → **Create fork**
 
-**จะเห็น:** repo ใหม่ชื่อ `<ชื่อบัญชีของคุณ>/leaveeasy` อยู่ในบัญชีคุณ ใต้ชื่อมีบรรทัดเล็ก ๆ ว่า `forked from cnacha-mfu/leaveeasy`
+**จะเห็น:** repo ใหม่ชื่อ `<ชื่อบัญชีของคุณ>/leaveeasy-start` อยู่ในบัญชีคุณ ใต้ชื่อมีบรรทัดเล็ก ๆ ว่า `forked from cnacha-mfu/leaveeasy-start`
 
 > 💡 **Fork = ก๊อปปี้ทั้ง repo มาไว้ในบัญชีคุณ** ของต้นแบบไม่ถูกแตะต้อง · 📌 **URL นี้คือสิ่งที่คุณจะส่งเป็นใบงาน** เปิดค้างไว้อีกแท็บ
 
 จากนั้น **เปิด Claude Code ในโฟลเดอร์ที่คุณอยากเก็บงาน** แล้วสั่ง
 
 ```prompt
-ช่วยโหลด repo ของผมจาก https://github.com/<ชื่อบัญชีของคุณ>/leaveeasy
+ช่วยโหลด repo ของผมจาก https://github.com/<ชื่อบัญชีของคุณ>/leaveeasy-start
 ลงมาไว้ในเครื่อง ในโฟลเดอร์ชื่อ leaveeasy
 บอกผมทีละขั้นว่าทำอะไรบ้าง
 ```
@@ -265,7 +265,7 @@
 
 1. 📸 โพสต์ screenshot Checkpoint 4 จากเครื่องคุณลงในแชท
 2. 🖼️ **เก็บหลักฐานที่ GitHub มองไม่เห็นเข้า repo** — สั่ง Claude ว่า *"ช่วยสร้างโฟลเดอร์ docs แล้วเก็บรูปที่ผมวางไว้เข้าไป แล้ว commit ส่งขึ้น GitHub ให้ผม"* แล้ววางภาพหน้า Firebase Console ลงไป
-3. 📤 **ส่งใบงาน:** วาง **URL repo ของคุณ** (`https://github.com/<ชื่อบัญชีของคุณ>/leaveeasy`) ใน Google Classroom ภายใน **จันทร์ 31 ส.ค. 2569**
+3. 📤 **ส่งใบงาน:** วาง **URL repo ของคุณ** (`https://github.com/<ชื่อบัญชีของคุณ>/leaveeasy-start`) ใน Google Classroom ภายใน **จันทร์ 31 ส.ค. 2569**
    > 📌 ส่ง **URL อย่างเดียว** ไม่ต้องแนบไฟล์ — ผู้สอนเปิด GitHub ตรวจเอง ดู commit ว่าเป็นชื่อคุณ ดูไฟล์ว่าครบ
 4. ✍️ ตอบในแชท: **"ขั้นตอนที่เพิ่งทำกับ LeaveEasy — ในหัวข้อของคุณคืออะไร?"** *(LeaveEasy มีโฟลเดอร์หลักชื่อ `leaveRequests` — ของคุณชื่ออะไร?)*
 5. 🏠 **การบ้านที่ 1 อยู่ที่ [`w6-homework.md`](w6-homework.html)** — ทำ 4 ขั้นเดียวกันนี้ **กับหัวข้อของคุณเองจาก Hackathon** ส่งใน Google Classroom **ภายในศุกร์ 4 ก.ย. 2569**

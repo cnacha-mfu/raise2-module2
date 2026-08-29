@@ -23,7 +23,7 @@
 
 | ต้องมี | ถ้าไม่มีให้ทำอย่างไร |
 |---|---|
-| repo LeaveEasy ของคุณบน GitHub (fork จากสัปดาห์ที่ 6) ที่หน้ารายการอ่านจาก Firestore ได้ | ยังไม่มี → กด **Fork** `https://github.com/cnacha-mfu/leaveeasy` แล้วให้ Claude โหลดลงเครื่อง |
+| repo LeaveEasy ของคุณบน GitHub (fork จากสัปดาห์ที่ 6) ที่หน้ารายการอ่านจาก Firestore ได้ | ยังไม่มี → กด **Fork** `https://github.com/cnacha-mfu/leaveeasy-start` แล้วให้ Claude โหลดลงเครื่อง |
 | บัญชี GitHub เข้าได้ | ลองเข้า github.com ก่อนเริ่มคาบ |
 | **Firebase CLI** (เครื่องมือนำเว็บขึ้นออนไลน์) | ⭐ **ติดตั้งให้เสร็จก่อนเข้าคาบ** — สั่ง Claude ว่า *"ช่วยติดตั้ง Firebase CLI ให้ผมทีละขั้น"* |
 
