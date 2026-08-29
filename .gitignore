@@ -11,3 +11,6 @@ open-router-apikey.xlsx
 
 # Firebase CLI build cache
 booking/.firebase/
+
+# ไฟล์ล็อกชั่วคราวของ Excel/Word
+~$*
