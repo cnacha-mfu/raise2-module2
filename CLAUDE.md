@@ -270,30 +270,63 @@ LeaveEasy  📁 users · 📁 leaveTypes · 📁 leaveRequests → 📁 approval
 
 ---
 
-## 5. โครงสร้างไฟล์
+## 5. โครงสร้างไฟล์และคำสั่ง
 
 ```
 Raise2/
 ├── plan.md                    ← แหล่งความจริง (ห้ามแก้ตอนผลิตสื่อ)
 ├── CLAUDE.md                  ← ไฟล์นี้
+├── index.html · _config.yml   ← หน้า TOC + ตั้งค่า Jekyll ของเว็บ GitHub Pages
 ├── materials/
+│   ├── README.md                    สารบัญคลังสื่อ (ฉบับผู้อ่านมนุษย์)
 │   ├── shared/
 │   │   ├── glossary.md              ศัพท์ → คำเทียบภาษาคน (คัดจาก plan.md 2.5)
-│   │   ├── slide-theme.md           สี ฟอนต์ ขนาด ที่ใช้ร่วมกันทุกสัปดาห์
-│   │   └── review-checklist.md      เช็กลิสต์ตรวจสื่อก่อนใช้จริง
+│   │   ├── homework-scope-guide.md  วิธีเลือกขอบเขตโครงงานตัวเองมาทำการบ้าน
+│   │   ├── specs/                   fixit-spec.md · leaveeasy-spec.md · ข้อมูลตัวอย่าง FixIt
+│   │   │                            (`fixit-sample-data.xlsx` + `fixit-folder-view/` แบบโฟลเดอร์+ไฟล์)
+│   │   ├── prototypes/              หน้าเว็บนิ่งของ fixit/ และ leaveeasy/ (ต้นทางของ repo ต้นแบบ)
+│   │   ├── recovery/                ชุด prompt กู้สถานะปลายสัปดาห์ 6–8 (ไม่ใช่โค้ด)
+│   │   ├── templates/               .gitignore · CLAUDE.md · ตัวอย่าง Rules · ตั้งค่า Playwright MCP
+│   │   └── supplements/             เนื้อหาเสริม เช่น llm-basics (ไม่บังคับใช้)
 │   ├── week6/
 │   │   ├── w6-slides.md             ← ต้นฉบับสไลด์ (เขียนที่นี่)
-│   │   ├── w6-slides.pptx           ← ผลลัพธ์จาก build script
-│   │   ├── w6-slides.html           ← เวอร์ชันเว็บ (build_html_slides.py)
+│   │   ├── w6-slides.pptx           ← ผลลัพธ์จาก build_slides.py
+│   │   ├── w6-slides.html           ← เวอร์ชันเว็บจาก build_html_slides.py
 │   │   ├── w6-demo-fixit.md         ← สคริปต์สาธิต (🎬 FixIt · ไม่ขึ้นเว็บ)
 │   │   ├── w6-lab-leaveeasy.md      ← ใบงาน (🔧 LeaveEasy)
 │   │   └── w6-homework.md           ← ใบการบ้าน (👤 หัวข้อของตัวเอง)
 │   ├── week7/ week8/ week9/         โครงเดียวกัน
-└── scripts/
-    └── build_slides.py              แปลง .md → .pptx
+├── scripts/                   build_slides.py · build_html_slides.py · check_slides.py
+├── booking/                   ระบบจองคิว Consult (Firebase Hosting + Firestore) — เครื่องมือผู้สอน
+└── ai-proxy/                  Cloudflare Worker ถือคีย์ OpenRouter แทนผู้เรียน — เครื่องมือผู้สอน
 ```
 
 **การตั้งชื่อ:** `w<เลขสัปดาห์>-<ประเภท>[-<ระบบ>].<นามสกุล>` · ภาพ: `assets/w6-03-console-view.png`
+
+### 5.1 คำสั่งที่ใช้บ่อย (รันจากรากโปรเจกต์)
+
+```bash
+python scripts/build_slides.py "materials/week6/w6-slides.md"   # .md → .pptx (ทีละไฟล์ · ต้องระบุ path)
+python scripts/build_html_slides.py                              # .md → .html ทุกสัปดาห์ (ระบุ path เพื่อทำทีละไฟล์)
+python scripts/check_slides.py                                   # ตรวจ .pptx ทุกสัปดาห์ (ระบุ path เพื่อตรวจทีละไฟล์)
+```
+
+`check_slides.py` ตรวจ 4 อย่าง: รูปทรงล้นขอบสไลด์ · ข้อความยาวเกินกล่อง · ข้อความจัดกึ่งกลางในที่ที่ควรชิดซ้าย · สไลด์ที่ไม่มีบันทึกผู้บรรยาย
+**แก้สไลด์เสร็จต้อง build ทั้ง `.pptx` และ `.html` แล้วรัน `check_slides.py` ทุกครั้ง** — `.pptx`/`.html` เป็นไฟล์ผลลัพธ์ ห้ามแก้มือ
+
+### 5.2 เว็บของหลักสูตร
+
+- push ขึ้น `main` → GitHub Actions (`.github/workflows/pages.yml`) build ด้วย Jekyll แล้ว deploy ขึ้น GitHub Pages อัตโนมัติ
+- **`_config.yml` มีรายการ `exclude` ที่กันไฟล์ผู้สอนไม่ให้ขึ้นเว็บ** — `plan.md` · `CLAUDE.md` · `scripts/` · **`wN-demo-fixit.md` ทุกสัปดาห์**
+  ➜ เพิ่มสัปดาห์ใหม่หรือเอกสารผู้สอนชิ้นใหม่เมื่อไร **ต้องไปเติมใน `exclude` ด้วย** ไม่งั้นสคริปต์สาธิตจะหลุดขึ้นเว็บให้ผู้เรียนเห็น
+- ลิงก์ในหน้า `index.html` เขียนมือ — เพิ่มไฟล์ใหม่แล้วต้องเติมลิงก์เอง
+
+### 5.3 สองโฟลเดอร์ที่ไม่ใช่สื่อการสอน
+
+| โฟลเดอร์ | คืออะไร | ข้อควรระวัง |
+|---|---|---|
+| `booking/` | ระบบจองคิว Consult ของผู้สอน (Firebase project `raise2-58508`) | เป็นระบบใช้งานจริง ไม่ใช่ตัวอย่างในสื่อ — **ห้ามอ้างถึงในใบงาน/สไลด์** |
+| `ai-proxy/` | Cloudflare Worker ถือคีย์ OpenRouter · จำกัดโควตารายคน · มีโมเดลสำรองและโหมดสาธิตเมื่อ AI ล่ม | โมเดลที่ตั้งไว้ต้อง**ตรวจว่ายังใช้ได้จริงเช้าวันสอน** ก่อนใช้ในคาบสัปดาห์ที่ 8 |
 
 ---
 
@@ -301,9 +334,9 @@ Raise2/
 
 ### 6.1 วิธีทำงาน
 
-1. เขียน **`wX-slides.md`** ก่อนเสมอ (นี่คือต้นฉบับที่แก้ง่าย)
-2. รัน `python scripts/build_slides.py materials/weekX/wX-slides.md` เพื่อสร้าง `.pptx`
-3. ถ้ายังไม่มี `build_slides.py` ให้สร้างขึ้นตามสเปกในข้อ 6.4
+1. เขียน **`wX-slides.md`** ก่อนเสมอ — **นี่คือต้นฉบับเดียวที่แก้** · `.pptx` และ `.html` เป็นไฟล์ผลลัพธ์
+2. build ทั้งสองแบบและตรวจ ตามคำสั่งในข้อ **5.1**
+3. แก้ปัญหาที่ `check_slides.py` รายงานที่ไฟล์ `.md` แล้ว build ใหม่ · ตัวแปลงมีสเปกอยู่ในข้อ 6.4
 
 ### 6.2 รูปแบบต้นฉบับสไลด์
 
