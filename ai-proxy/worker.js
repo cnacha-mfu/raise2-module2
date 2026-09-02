@@ -13,7 +13,7 @@
 
 // ⚠️ ตรวจสอบว่าโมเดลนี้ใช้ได้จริงในเช้าวันสอน แล้วค่อยเริ่มคาบ
 const PRIMARY_MODEL  = 'openai/gpt-4o-mini'      // โมเดลหลัก (แนะนำแบบเสียเงินราคาถูกสำหรับห้องใหญ่)
-const FALLBACK_MODEL = 'google/gemini-2.0-flash-001'  // โมเดลสำรอง ใช้เมื่อตัวหลักล่ม
+const FALLBACK_MODEL = 'google/gemini-2.5-flash-lite'  // โมเดลสำรอง ใช้เมื่อตัวหลักล่ม (ตรวจใช้งานได้ 2 ก.ย. 2569)
 
 const DAILY_LIMIT      = 60      // จำนวนครั้งต่อคนต่อวัน
 const MAX_INPUT_CHARS  = 4000    // กันผู้เรียนส่งข้อความยาวเกินจนเปลืองโทเคน
