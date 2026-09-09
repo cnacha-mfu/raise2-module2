@@ -14,9 +14,7 @@ node_modules/
 
 
 # ── 🔑 ของลับ ห้ามหลุดเด็ดขาด ──
-# API key ของ OpenRouter (สัปดาห์ที่ 8) และค่าตั้งค่าที่เป็นความลับ
-config.js
-js/config.js
+# ไฟล์ที่เก็บรหัสผ่านหรือคีย์ของบริการภายนอก
 secrets.js
 .env
 .env.local
