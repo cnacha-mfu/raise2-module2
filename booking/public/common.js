@@ -9,13 +9,14 @@ import {
 
 import {
   FIREBASE_CONFIG_URL, ADMIN_EMAILS, ALLOWED_DOMAINS, CONSULT_DAYS,
-  SLOT_MINUTES, QUOTA_PER_WEEK, WEEK_TITLES,
+  SLOT_MINUTES, QUOTA_PER_WEEK, WEEK_TITLES, MIN_LEAD_HOURS, EMAILJS,
 } from "./config.js";
 
 export {
   collection, doc, onSnapshot, writeBatch, serverTimestamp,
   query, where, getDocs, deleteDoc,
   ADMIN_EMAILS, ALLOWED_DOMAINS, CONSULT_DAYS, SLOT_MINUTES, QUOTA_PER_WEEK, WEEK_TITLES,
+  MIN_LEAD_HOURS, EMAILJS,
 };
 
 // ค่าเชื่อมต่อมาจาก Firebase Hosting โดยตรง (ดูเหตุผลใน config.js ข้อ 7)
@@ -135,11 +136,26 @@ export function allSlots() {
   return CONSULT_DAYS.flatMap(slotsOfDay);
 }
 
-/** ช่องนี้ผ่านไปแล้วหรือยัง (เทียบเวลาเครื่องผู้ใช้) */
-export function isPast(slot) {
+/** เวลาเริ่มของช่องนี้ เป็น timestamp ของเครื่องผู้ใช้ */
+export function slotStart(slot) {
   const [y, mo, d] = slot.date.split("-").map(Number);
   const [h, mi] = slot.time.split(":").map(Number);
-  return new Date(y, mo - 1, d, h, mi).getTime() < Date.now();
+  return new Date(y, mo - 1, d, h, mi).getTime();
+}
+
+/** ช่องนี้ผ่านไปแล้วหรือยัง (เทียบเวลาเครื่องผู้ใช้) */
+export function isPast(slot) {
+  return slotStart(slot) < Date.now();
+}
+
+/**
+ * ช่องนี้ใกล้เกินไปจนจองไม่ได้แล้วหรือยัง
+ * ต้องจองล่วงหน้าอย่างน้อย MIN_LEAD_HOURS ชั่วโมง (ตั้งค่าใน config.js ข้อ 4B)
+ */
+export function tooSoon(slot) {
+  if (!MIN_LEAD_HOURS) return false;
+  const deadline = slotStart(slot) - MIN_LEAD_HOURS * 60 * 60 * 1000;
+  return Date.now() > deadline && !isPast(slot);
 }
 
 export function quotaId(uid, week) {
@@ -155,6 +171,12 @@ export function quotaId(uid, week) {
  *   quota/{uid}_w{week}   กันจองเกินโควตาของสัปดาห์นั้น
  */
 export async function bookSlot(user, slot, topic) {
+  // กันไว้อีกชั้นเผื่อเวลาเดินผ่านเส้นตายระหว่างที่หน้าต่างยืนยันเปิดค้างอยู่
+  if (isPast(slot) || tooSoon(slot)) {
+    const e = new Error("too soon");
+    e.code = "app/too-soon";
+    throw e;
+  }
   const batch = writeBatch(db);
   batch.set(doc(db, "slots", slot.id), {
     date: slot.date, time: slot.time, week: slot.week,
@@ -170,6 +192,42 @@ export async function bookSlot(user, slot, topic) {
     slotId: slot.id, createdAt: serverTimestamp(),
   });
   await withTimeout(batch.commit());
+}
+
+/* ── อีเมลแจ้งผู้สอน ───────────────────────────────────────────────────────
+   ส่งผ่าน EmailJS จากหน้าเว็บโดยตรง (ตั้งค่าใน config.js ข้อ 6B)
+   ⚠️ ห้ามทำให้การจองล้มเหลวเพราะอีเมลส่งไม่ออก — คิวถูกบันทึกไปแล้ว
+      ถ้าส่งไม่สำเร็จให้เขียน error ลง console เฉย ๆ ผู้สอนยังเห็นคิวในหน้า admin อยู่ดี */
+
+let emailjsLib = null;
+
+async function loadEmailjs() {
+  if (!emailjsLib) {
+    emailjsLib = await import("https://cdn.jsdelivr.net/npm/@emailjs/browser@4/+esm")
+      .then((m) => m.default || m);
+  }
+  return emailjsLib;
+}
+
+/** แจ้งผู้สอนทางอีเมลว่ามีคนจองคิว · คืน true เมื่อส่งสำเร็จ */
+export async function notifyInstructor(user, slot, topic) {
+  if (!EMAILJS?.SERVICE_ID || !EMAILJS?.TEMPLATE_ID || !EMAILJS?.PUBLIC_KEY) return false;
+  try {
+    const lib = await loadEmailjs();
+    // ชื่อตัวแปรต้องตรงกับเทมเพลตใน EmailJS: title · name · time · message · email
+    await withTimeout(lib.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, {
+      to_email: EMAILJS.TO_EMAIL,   // ใช้ได้ถ้าช่อง To Email ของเทมเพลตตั้งเป็น {{to_email}}
+      title: `จองคิว Consult สัปดาห์ที่ ${slot.week} — ${thaiDate(slot.date)} ${slot.time} น.`,
+      name: user.displayName || "(ไม่มีชื่อ)",
+      time: `${thaiDate(slot.date)} เวลา ${slot.time}–${slot.endTime} น. · สัปดาห์ที่ ${slot.week}`,
+      message: topic,
+      email: (user.email || "").toLowerCase(),
+    }, { publicKey: EMAILJS.PUBLIC_KEY }), 12000);
+    return true;
+  } catch (e) {
+    console.error("ส่งอีเมลแจ้งผู้สอนไม่สำเร็จ (การจองยังสำเร็จ):", e);
+    return false;
+  }
 }
 
 /** ยกเลิกคิว — ลบทั้ง 3 เอกสารพร้อมกัน */
@@ -217,6 +275,10 @@ export function humanError(err) {
   const code = err?.code || "";
   if (code === "permission-denied") {
     return "ระบบไม่อนุญาต — ช่องนี้อาจถูกคนอื่นจองไปพอดี หรือคุณจองครบโควตาของสัปดาห์นี้แล้ว กดรีเฟรชแล้วลองใหม่";
+  }
+  if (code === "app/too-soon") {
+    return `ช่องนี้เหลือเวลาไม่ถึง ${MIN_LEAD_HOURS} ชั่วโมงแล้ว — ระบบให้จองล่วงหน้าอย่างน้อย `
+      + `${MIN_LEAD_HOURS} ชั่วโมง กรุณาเลือกช่องอื่น`;
   }
   if (code === "app/timeout") {
     return "ระบบไม่ตอบภายใน 15 วินาที — มักเกิดจากฐานข้อมูลของโปรเจกต์ยังไม่ถูกสร้าง "

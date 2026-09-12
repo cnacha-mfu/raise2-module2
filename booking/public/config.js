@@ -22,6 +22,11 @@ export const QUOTA_PER_WEEK = 1;
 // ── 4. ความยาวของแต่ละช่อง (นาที) ──
 export const SLOT_MINUTES = 30;
 
+// ── 4B. ต้องจองล่วงหน้าอย่างน้อยกี่ชั่วโมง ──
+//    ช่องที่เหลือเวลาน้อยกว่านี้จะกดไม่ได้ (ปุ่มเป็นสีเทา)
+//    ตั้ง 0 = จองได้จนถึงนาทีสุดท้าย
+export const MIN_LEAD_HOURS = 2;
+
 // ── 5. วันและเวลาที่เปิดให้จอง ──
 //    เพิ่มวันได้ด้วยการเพิ่มบรรทัดในรายการนี้ · ลบวันได้ด้วยการลบบรรทัด
 //    date ต้องเป็นรูปแบบ YYYY-MM-DD (ค.ศ.) · week คือสัปดาห์ของคอร์ส
@@ -42,6 +47,29 @@ export const WEEK_TITLES = {
   7: "CRUD + ล็อกอิน + ขึ้นออนไลน์",
   8: "ปิดข้อมูล + ผู้ช่วย AI + Reviewer",
   9: "Tester + ปิด Module",
+};
+
+// ── 6B. อีเมลแจ้งผู้สอนเมื่อมีคนจองคิว (ผ่าน EmailJS) ──
+//    ส่งจากหน้าเว็บโดยตรง ไม่ต้องมีเซิร์ฟเวอร์และไม่ต้องอัปเกรด Firebase เป็น Blaze
+//
+//    🔧 ตั้งค่าครั้งเดียวที่ https://dashboard.emailjs.com
+//      1) Email Services → Add New Service (เช่น Gmail) → ได้ "Service ID"
+//      2) Email Templates → Create New Template → ได้ "Template ID"
+//         🔴 ช่อง To Email ของเทมเพลตต้องเป็น  nacha.cho@mfu.ac.th  หรือ  {{to_email}}
+//            ถ้าเผลอใส่ {{email}} อีเมลจะวิ่งไปหา "ผู้เรียนที่จอง" แทนผู้สอน
+//         เนื้อความใช้ตัวแปรของเทมเพลตนี้:  {{title}} {{name}} {{time}} {{message}} {{email}}
+//      3) Account → General → คัดลอก "Public Key"
+//      4) Account → Security → เปิด Allowed Origins แล้วใส่ https://raise2-58508.web.app
+//         เพื่อกันคนอื่นเอาคีย์ไปยิงอีเมลจากเว็บอื่น
+//
+//    ℹ️ Public Key ของ EmailJS ออกแบบมาให้เปิดเผยในหน้าเว็บได้ — ไม่ใช่ความลับ
+//    ⏸️ ปล่อย SERVICE_ID เป็นค่าว่าง = ปิดการส่งอีเมล (ระบบจองยังทำงานปกติ)
+//    ⚠️ ถ้าส่งอีเมลไม่สำเร็จ การจอง "ยังสำเร็จ" เสมอ — ระบบจะไม่ยกเลิกคิวเพราะอีเมลล่ม
+export const EMAILJS = {
+  SERVICE_ID: "service_e08xcug",
+  TEMPLATE_ID: "template_bbjr7yf",
+  PUBLIC_KEY: "6DeKO3ZWugkwKkAz9",
+  TO_EMAIL: "nacha.cho@mfu.ac.th",      // อีเมลผู้สอนที่จะได้รับแจ้งเตือน
 };
 
 // ── 7. ค่าเชื่อมต่อ Firebase ──

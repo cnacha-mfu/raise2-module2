@@ -69,6 +69,7 @@
       <p>
         • จองแล้วชื่อของคุณจะไม่แสดงให้ผู้เรียนคนอื่นเห็น — เห็นแค่ว่าช่องนั้นเต็มแล้ว<br>
         • ถ้าไปไม่ได้ <b>กรุณากดยกเลิก</b> เพื่อคืนช่องให้เพื่อน<br>
+        • <b>ต้องจองล่วงหน้าอย่างน้อย <span id="leadTxt">2</span> ชั่วโมง</b> — ช่องที่เหลือเวลาน้อยกว่านี้ปุ่มจะเป็นสีเทา กดไม่ได้<br>
         • ช่องที่เวลาผ่านไปแล้วจะจองไม่ได้<br>
         • Consult เป็นการนัดคุยรายคน ผู้สอนจะขอให้คุณเปิดหน้าจอและอธิบายงานของตัวเอง
       </p>
@@ -95,8 +96,9 @@
 import {
   watchAuth, signIn, signOutNow, mayUse, isAdmin, domainAllowed, backendReachable,
   db, collection, onSnapshot, query, where,
-  bookSlot, cancelSlot, allSlots, slotsOfDay, isPast, thaiDate, humanError,
-  CONSULT_DAYS, WEEK_TITLES, SLOT_MINUTES, QUOTA_PER_WEEK, ALLOWED_DOMAINS,
+  bookSlot, cancelSlot, notifyInstructor, allSlots, slotsOfDay, isPast, tooSoon,
+  thaiDate, humanError,
+  CONSULT_DAYS, WEEK_TITLES, SLOT_MINUTES, QUOTA_PER_WEEK, ALLOWED_DOMAINS, MIN_LEAD_HOURS,
 } from "./common.js";
 
 const $ = (id) => document.getElementById(id);
@@ -108,6 +110,11 @@ let pending = null;
 
 $("slotLen").textContent = SLOT_MINUTES;
 $("quotaTxt").textContent = QUOTA_PER_WEEK;
+$("leadTxt").textContent = MIN_LEAD_HOURS;
+
+// เส้นตาย "ล่วงหน้า 2 ชั่วโมง" เดินตามเวลาจริง — วาดปุ่มใหม่ทุกนาที
+// ช่องที่เพิ่งหมดเวลาจะกลายเป็นสีเทาเองโดยไม่ต้องรีเฟรชหน้า
+setInterval(() => { if (user && mayUse(user)) paintWeeks(); }, 60000);
 
 /* ── ล็อกอิน ─────────────────────────────────────────────── */
 
@@ -277,6 +284,9 @@ function paintWeeks() {
           b.textContent = slot.time + " ✓";
         } else if (isPast(slot)) {
           b.classList.add("past"); b.disabled = true; b.title = "เวลาผ่านไปแล้ว";
+        } else if (tooSoon(slot)) {
+          b.classList.add("past"); b.disabled = true;
+          b.title = `ปิดรับแล้ว — ต้องจองล่วงหน้าอย่างน้อย ${MIN_LEAD_HOURS} ชั่วโมง`;
         } else if (t) {
           b.classList.add("taken"); b.disabled = true; b.title = "มีคนจองแล้ว";
         } else if (full) {
@@ -337,8 +347,11 @@ $("modalOk").onclick = async () => {
   try {
     await bookSlot(user, pending, topic);
     const when = `${thaiDate(pending.date)} · ${pending.time} น.`;
+    const booked = pending;
     closeModal();
     showMsg(`จองสำเร็จ — ${when} · ผู้สอนเห็นคิวของคุณแล้ว`, false);
+    // แจ้งผู้สอนทางอีเมล — ทำหลังจากจองสำเร็จแล้ว และไม่ให้กระทบผลการจอง
+    notifyInstructor(user, booked, topic);
   } catch (e) {
     $("modalErr").textContent = humanError(e);
     $("modalErr").classList.remove("hidden");
