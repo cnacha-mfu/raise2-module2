@@ -14,3 +14,6 @@ booking/.firebase/
 
 # ไฟล์ล็อกชั่วคราวของ Excel/Word
 ~$*
+
+# วิดีโอใหญ่เกินขีด 100 MB ของ GitHub — เก็บใน Google Drive แล้วลิงก์จากหน้าเว็บ
+*.mp4
